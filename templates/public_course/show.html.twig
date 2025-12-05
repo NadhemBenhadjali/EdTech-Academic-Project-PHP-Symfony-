@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block body %}
+    <h1>{{ course.title }}</h1>
+
+    <p><strong>Category:</strong> {{ course.category ? course.category.name : '' }}</p>
+    <p><strong>Price:</strong> {{ course.price }}</p>
+
+    <h2>Chapters</h2>
+    <ul>
+        {% for chapter in course.chapters %}
+            <li>{{ chapter.title }}</li>
+        {% else %}
+            <li>No chapters yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Attachments</h2>
+    <ul>
+        {% for attachment in course.attachments %}
+            <li>
+                <a href="{{ attachment.url }}" target="_blank">
+                    {{ attachment.name ?: attachment.url }}
+                </a>
+            </li>
+        {% else %}
+            <li>No attachments yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Quizzes</h2>
+    <ul>
+        {% for quiz in course.quizzes %}
+            <li>
+                {{ quiz.title }}
+                {% if quiz.url %}
+                    – <a href="{{ quiz.url }}" target="_blank">Open quiz</a>
+                {% else %}
+                    – (quiz link not available yet)
+                {% endif %}
+            </li>
+        {% else %}
+            <li>No quizzes yet.</li>
+        {% endfor %}
+    </ul>
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if is_enrolled is defined and is_enrolled %}
+            <p>You are already enrolled in this course.</p>
+        {% else %}
+            <p>
+                <a href="{{ path('public_course_enroll', {'id': course.id}) }}">Enroll</a>
+            </p>
+        {% endif %}
+    {% else %}
+        <p><a href="{{ path('app_login') }}">Log in to enroll</a></p>
+    {% endif %}
+
+    <p><a href="{{ path('public_course_index') }}">Back to courses</a></p>
+{% endblock %}

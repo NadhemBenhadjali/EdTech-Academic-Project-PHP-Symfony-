@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My teaching courses{% endblock %}
+
+{% block body %}
+    <h1>My teaching courses</h1>
+
+    <p><a href="{{ path('teacher_course_new') }}">Create new course</a></p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for course in courses %}
+            <tr>
+                <td>{{ course.title }}</td>
+                <td>{{ course.category ? course.category.name : '' }}</td>
+                <td>{{ course.price }}</td>
+                <td>
+                    <a href="{{ path('teacher_course_show', {'id': course.id}) }}">show</a>
+                    <a href="{{ path('teacher_course_edit', {'id': course.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">You have no courses yet.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

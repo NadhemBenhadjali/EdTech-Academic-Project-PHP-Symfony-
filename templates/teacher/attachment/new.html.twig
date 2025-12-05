@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Attachment{% endblock %}
+
+{% block body %}
+    <h1>Create new attachment for "{{ course.title }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.url) }}
+    {# course field is set in the controller, we don't show it #}
+    <button class="btn">Save</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('teacher_course_show', {'id': course.id}) }}">back to course</a>
+{% endblock %}

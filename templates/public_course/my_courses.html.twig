@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My courses{% endblock %}
+
+{% block body %}
+    <h1>My courses</h1>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Course</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for purchase in purchases %}
+            <tr>
+                <td>
+                    {{ purchase.course ? purchase.course.title : '' }}
+                </td>
+                <td>
+                    {{ purchase.date ? purchase.date|date('Y-m-d H:i') : '' }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">You are not enrolled in any courses yet.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

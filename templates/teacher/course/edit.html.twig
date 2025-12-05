@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Course{% endblock %}
+
+{% block body %}
+    <h1>Edit course</h1>
+
+    {{ include('teacher/course/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <form method="post"
+          action="{{ path('teacher_course_delete', {'id': course.id}) }}"
+          onsubmit="return confirm('Are you sure you want to delete this course?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
+        <button class="btn">Delete</button>
+    </form>
+
+    <a href="{{ path('teacher_course_index') }}">back to my courses</a>
+{% endblock %}

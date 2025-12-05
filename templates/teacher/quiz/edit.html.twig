@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Quiz{% endblock %}
+
+{% block body %}
+    <h1>Edit quiz for "{{ course.title }}"</h1>
+
+    {{ include('quiz/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('teacher_course_show', {'id': course.id}) }}">back to course</a>
+{% endblock %}

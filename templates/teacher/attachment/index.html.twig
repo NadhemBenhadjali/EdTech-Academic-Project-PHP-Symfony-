@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attachment index{% endblock %}
+
+{% block body %}
+    <h1>Attachment index</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Url</th>
+            <th>Course</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for attachment in attachments %}
+            <tr>
+                <td>{{ attachment.id }}</td>
+                <td>
+                    <a href="{{ attachment.url }}" target="_blank">
+                        {{ attachment.url }}
+                    </a>
+                </td>
+                <td>
+                    {{ attachment.course ? attachment.course.title : '' }}
+                </td>
+                <td>
+                    <a href="{{ path('admin_attachment_show', {'id': attachment.id}) }}">show</a>
+                    <a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# We don't have a generic "new" without a course id, attachments are created from the course page #}
+{% endblock %}

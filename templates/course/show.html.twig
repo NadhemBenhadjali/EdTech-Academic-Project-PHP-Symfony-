@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Course{% endblock %}
+
+{% block body %}
+    <h1>Course</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ course.id }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ course.title }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ course.description }}</td>
+        </tr>
+        <tr>
+            <th>Price</th>
+            <td>{{ course.price }}</td>
+        </tr>
+        <tr>
+            <th>Category</th>
+            <td>{{ course.category ? course.category.name : '' }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Chapters</h2>
+    <ul>
+        {% for chapter in course.chapters %}
+            <li>
+                {{ chapter.title }}
+                (<a href="{{ path('admin_chapter_edit', {'id': chapter.id}) }}">edit</a>)
+            </li>
+        {% else %}
+            <li>No chapters yet.</li>
+        {% endfor %}
+    </ul>
+    <p>
+        <a href="{{ path('admin_chapter_new_for_course', {'id': course.id}) }}">Add chapter</a>
+    </p>
+
+    <h2>Attachments</h2>
+    <ul>
+        {% for attachment in course.attachments %}
+            <li>
+                <a href="{{ attachment.url }}" target="_blank">
+                    {{ attachment.name ?: attachment.url }}
+                </a>
+                (<a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>)
+            </li>
+        {% else %}
+            <li>No attachments yet.</li>
+        {% endfor %}
+    </ul>
+    <p>
+        <a href="{{ path('admin_attachment_new_for_course', {'id': course.id}) }}">
+            Add attachment
+        </a>
+    </p>
+
+    <h2>Quizzes</h2>
+    <ul>
+        {% for quiz in course.quizzes %}
+            <li>
+                {{ quiz.title }}
+                {% if quiz.url %}
+                    – <a href="{{ quiz.url }}" target="_blank">Open external quiz</a>
+                {% else %}
+                    – (no URL set)
+                {% endif %}
+                (<a href="{{ path('admin_quiz_edit', {'id': quiz.id}) }}">edit</a>)
+            </li>
+        {% else %}
+            <li>No quizzes yet.</li>
+        {% endfor %}
+    </ul>
+    <p>
+        <a href="{{ path('admin_quiz_new_for_course', {'id': course.id}) }}">
+            Add quiz
+        </a>
+    </p>
+
+    <a href="{{ path('admin_course_index') }}">back to list</a>
+    <a href="{{ path('admin_course_edit', {'id': course.id}) }}">edit</a>
+
+    {{ include('course/_delete_form.html.twig') }}
+{% endblock %}

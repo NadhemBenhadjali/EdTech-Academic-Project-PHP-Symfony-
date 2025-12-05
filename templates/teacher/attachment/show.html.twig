@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Attachment{% endblock %}
+
+{% block body %}
+    <h1>Attachment</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ attachment.id }}</td>
+        </tr>
+        <tr>
+            <th>Url</th>
+            <td>
+                <a href="{{ attachment.url }}" target="_blank">
+                    {{ attachment.url }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>Course</th>
+            <td>{{ attachment.course ? attachment.course.title : '' }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    {% if attachment.course %}
+        <a href="{{ path('admin_course_show', {'id': attachment.course.id}) }}">back to course</a>
+    {% endif %}
+
+    <a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>
+
+    {{ include('attachment/_delete_form.html.twig') }}
+{% endblock %}

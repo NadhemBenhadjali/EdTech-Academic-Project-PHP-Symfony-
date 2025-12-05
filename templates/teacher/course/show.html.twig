@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block body %}
+    <h1>{{ course.title }}</h1>
+
+    <p><strong>Category:</strong> {{ course.category ? course.category.name : '' }}</p>
+    <p><strong>Price:</strong> {{ course.price }}</p>
+    <p>{{ course.description }}</p>
+
+    {# Attachments managed by this teacher #}
+    <h2>Attachments</h2>
+    <ul>
+        {% for attachment in course.attachments %}
+            <li>
+                <a href="{{ attachment.url }}" target="_blank">
+                    {{ attachment.name ?: attachment.url }}
+                </a>
+                (<a href="{{ path('teacher_attachment_edit', {'id': attachment.id}) }}">edit</a>)
+                <form method="post"
+                      action="{{ path('teacher_attachment_delete', {'id': attachment.id}) }}"
+                      style="display:inline"
+                      onsubmit="return confirm('Delete this attachment?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ attachment.id) }}">
+                    <button class="btn btn-link">delete</button>
+                </form>
+            </li>
+        {% else %}
+            <li>No attachments yet.</li>
+        {% endfor %}
+    </ul>
+    <p>
+        <a href="{{ path('teacher_attachment_new_for_course', {'id': course.id}) }}">
+            Add attachment
+        </a>
+    </p>
+
+    {# Quizzes (external links) managed by teacher #}
+    <h2>Quizzes</h2>
+    <ul>
+        {% for quiz in course.quizzes %}
+            <li>
+                {{ quiz.title }}
+                {% if quiz.url %}
+                    – <a href="{{ quiz.url }}" target="_blank">Open quiz</a>
+                {% else %}
+                    – (no URL set)
+                {% endif %}
+                (<a href="{{ path('teacher_quiz_edit', {'id': quiz.id}) }}">edit</a>)
+                <form method="post"
+                      action="{{ path('teacher_quiz_delete', {'id': quiz.id}) }}"
+                      style="display:inline"
+                      onsubmit="return confirm('Delete this quiz?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
+                    <button class="btn btn-link">delete</button>
+                </form>
+            </li>
+        {% else %}
+            <li>No quizzes yet.</li>
+        {% endfor %}
+    </ul>
+    <p>
+        <a href="{{ path('teacher_quiz_new_for_course', {'id': course.id}) }}">
+            Add quiz
+        </a>
+    </p>
+
+    {# Enrolled students #}
+    <h2>Enrolled students</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Enrolled at</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.user.name }}</td>
+                <td>{{ purchase.user.email }}</td>
+                <td>{{ purchase.date ? purchase.date|date('Y-m-d H:i') : '' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No students enrolled yet.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        <a href="{{ path('teacher_course_edit', {'id': course.id}) }}">Edit course</a> |
+        <a href="{{ path('teacher_course_index') }}">Back to my courses</a>
+    </p>
+{% endblock %}

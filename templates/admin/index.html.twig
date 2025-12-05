@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin dashboard{% endblock %}
+
+{% block body %}
+    <h1>Admin dashboard</h1>
+
+    <p>Welcome {{ app.user.email }}</p>
+
+    <ul>
+        <li><a href="{{ path('admin_category_index') }}">Manage categories</a></li>
+        <li><a href="{{ path('admin_course_index') }}">Manage courses</a></li>
+    </ul>
+
+{% endblock %}

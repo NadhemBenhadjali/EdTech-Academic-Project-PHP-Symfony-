@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome 👋{% endblock %}
+
+{% block body %}
+    <h1>Welcome 👋</h1>
+
+    {% if app.user %}
+        <p>
+            Logged in as {{ app.user.email }}
+            {% if app.user.name is defined and app.user.name %}
+                ({{ app.user.name }})
+            {% endif %}
+        </p>
+
+        <p>
+            <a href="{{ path('public_course_index') }}">Browse courses</a> |
+            <a href="{{ path('student_courses') }}">My courses</a>
+
+            {# Teacher area link #}
+            {% if is_granted('ROLE_TEACHER') %}
+                | <a href="{{ path('teacher_course_index') }}">My teaching courses</a>
+            {% endif %}
+
+            {# Admin area link #}
+            {% if is_granted('ROLE_ADMIN') %}
+                | <a href="{{ path('admin_dashboard') }}">Go to admin dashboard</a>
+            {% endif %}
+
+            | <a href="{{ path('app_logout') }}">Logout</a>
+        </p>
+    {% else %}
+        <p>You are not logged in.</p>
+
+        <p>
+            <a href="{{ path('public_course_index') }}">Browse courses</a> |
+            <a href="{{ path('app_login') }}">Login</a> |
+            <a href="{{ path('app_register') }}">Register</a>
+        </p>
+    {% endif %}
+{% endblock %}

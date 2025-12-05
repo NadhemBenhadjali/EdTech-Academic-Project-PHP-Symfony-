@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Attachment{% endblock %}
+
+{% block body %}
+    <h1>Edit attachment for "{{ course.title }}"</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.url) }}
+    <button class="btn">Update</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('teacher_course_show', {'id': course.id}) }}">back to course</a>
+{% endblock %}
