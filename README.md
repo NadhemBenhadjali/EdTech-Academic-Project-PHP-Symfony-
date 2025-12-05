@@ -7,6 +7,7 @@ It supports three roles:
 - Admin
 - Teacher
 - Student
+![Alt text](photo.png)
 
 ## Main features
 
