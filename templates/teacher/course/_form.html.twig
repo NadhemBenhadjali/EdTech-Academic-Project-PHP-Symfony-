@@ -1,10 +1,92 @@
-{{ form_start(form) }}
-    {{ form_row(form.title) }}
-    {{ form_row(form.description) }}
-    {{ form_row(form.price) }}
-    {{ form_row(form.category) }}
-
-<button class="btn">
-    {{ button_label|default('Save') }}
-</button>
+{{ form_start(form, {'attr': {'class': 'main-form'}}) }}
+    <div class="form-group">
+        {{ form_row(form.title) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.description) }}
+    </div>
+    <div class="form-group">
+        {{ form_row(form.price) }}
+    </div>
+    <div class="form-group">
+        {# Render category select if there are choices; otherwise show helpful message + link to create one #}
+        {{ form_label(form.category) }}
+        {% set choices = form.category.vars.choices is defined ? form.category.vars.choices : [] %}
+        {% if choices|length > 0 %}
+            {{ form_widget(form.category) }}
+        {% else %}
+            <div style="padding:0.6rem 0.8rem; background:rgba(255,255,255,0.03); border-radius:8px;">
+                <p style="margin:0 0 0.4rem 0; color:#f3f4f6;">Aucune catégorie trouvée. Créez d'abord une catégorie.</p>
+                <a href="{{ path('admin_category_new') }}" class="btn-action btn-primary">Créer une catégorie</a>
+            </div>
+        {% endif %}
+    </div>
+    <button class="btn-submit">
+        {{ button_label|default('Save') }}
+    </button>
 {{ form_end(form) }}
+
+<style>
+.main-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.form-group {
+    margin-bottom: 0.5rem;
+}
+.main-form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted, #9ca3af);
+    font-size: 0.97rem;
+}
+.main-form input, .main-form textarea, .main-form select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border, rgba(255,255,255,0.15));
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    color: var(--text-light, #e5e7eb);
+    font-size: 1rem;
+    transition: all 0.3s var(--transition-curve, cubic-bezier(0.25, 0.8, 0.25, 1));
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    resize: vertical;
+}
+.main-form input:focus, .main-form textarea:focus, .main-form select:focus {
+    outline: none;
+    border-color: var(--details-gradient-start, #4f46e5);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+.btn-submit {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s var(--transition-curve, cubic-bezier(0.25, 0.8, 0.25, 1));
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    border: none;
+    background: var(--accent-gradient, linear-gradient(90deg, #4f46e5 0%, #ec4899 100%));
+    background-size: 200% 100%;
+    color: var(--text-light, #e5e7eb);
+    margin-top: 1rem;
+}
+.btn-submit:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.18);
+}
+@media (max-width: 700px) {
+    .main-form {
+        gap: 0.7rem;
+    }
+    .btn-submit {
+        font-size: 0.98rem;
+        padding: 0.7rem 1rem;
+    }
+}
+</style>

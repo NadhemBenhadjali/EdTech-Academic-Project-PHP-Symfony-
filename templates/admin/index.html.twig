@@ -1,15 +1,452 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin dashboard{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: var(--white);
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary-gradient);
+            top: 10%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--accent-gradient);
+            top: 50%;
+            right: -10%;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary-gradient);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-40px) rotate(180deg) scale(1.1); }
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Restaurer le visuel 'card/glass' pour conserver le style précédent */
+        .dashboard-card {
+            width: 100%;
+            max-width: 1200px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 36px;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 0.8fr;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8) 20%, rgba(103, 126, 234, 0.8) 50%, rgba(255, 255, 255, 0.8) 80%, transparent);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; transform: translateX(-100%); }
+            50% { opacity: 1; transform: translateX(100%); }
+        }
+
+        .dashboard-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 3.25rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .highlight {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            max-width: 500px;
+        }
+
+        .user-welcome-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            backdrop-filter: blur(15px) saturate(180%);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 8px 32px rgba(103, 126, 234, 0.3);
+        }
+
+        /* Boutons originaux (glass / légèrement en relief) */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            cursor: pointer;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-primary { background: var(--primary-gradient); color: var(--white); }
+        .btn-secondary { background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); color: var(--white); }
+        /* .btn-accent removed (unused) to clean CSS warnings */
+
+        /* Nouveau : Floating Action Button de retour (FAB) pour le dashboard */
+        .return-fab {
+            position: fixed;
+            right: 28px;
+            bottom: 28px; /* moved to bottom-right */
+            z-index: 60;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: transparent; /* pas de boîte */
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--white);
+            border-radius: 50%;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 180ms cubic-bezier(.25,.8,.25,1), box-shadow 180ms ease;
+        }
+
+        .return-fab:focus { outline: none; }
+        .return-fab:focus-visible { box-shadow: 0 0 0 8px rgba(103,126,234,0.10); border-radius: 50%; }
+
+        /* tooltip custom via pseudo-element */
+        .return-fab::after {
+            content: attr(title);
+            position: absolute;
+            right: calc(100% + 12px);
+            bottom: 50%;
+            transform: translateY(50%);
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 140ms ease, transform 140ms ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+        }
+
+        .return-fab:hover::after, .return-fab:focus-visible::after { opacity: 1; transform: translateY(40%); }
+
+        .return-fab-icon {
+            width: 100%;
+            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+            color: var(--white);
+            font-weight: 900;
+            font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: none;
+            backdrop-filter: blur(6px);
+            border-radius: 50%;
+            transition: transform 140ms cubic-bezier(.25,.8,.25,1), box-shadow 140ms ease, background 140ms ease;
+        }
+
+        .return-fab:hover .return-fab-icon { transform: translateY(-4px) scale(1.03); box-shadow: 0 10px 30px rgba(103,126,234,0.06); }
+
+        @media (max-width:700px) { .return-fab { width:52px; height:52px; right:16px; bottom:16px; } .return-fab::after { display:none; } }
+
+        .kpi-visual {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--white);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            animation: badgeFloat 4s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .kpi-card:nth-child(1) { animation-delay: 0s; }
+        .kpi-card:nth-child(2) { animation-delay: 1s; }
+        .kpi-card:nth-child(3) { animation-delay: 2s; grid-column: 1 / -1; }
+
+        .kpi-value {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes badgeFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard-card {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding: 2.5rem;
+                text-align: center;
+            }
+            .dashboard-subtitle { margin-left: auto; margin-right: auto; }
+            .action-buttons { justify-content: center; }
+            .user-welcome-card { margin-left: auto; margin-right: auto; max-width: 400px; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 1rem; }
+            .dashboard-card { padding: 2rem; border-radius: 24px; }
+            .dashboard-title { font-size: 2.5rem; }
+            .kpi-visual { grid-template-columns: 1fr; }
+            .kpi-card:nth-child(3) { grid-column: auto; }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Admin dashboard</h1>
+    <div class="background-container">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
 
-    <p>Welcome {{ app.user.email }}</p>
+    <div class="dashboard-container">
+        <div class="dashboard-card">
+            <div class="dashboard-content">
+                <h1 class="dashboard-title">
+                    Admin <span class="highlight">Dashboard</span>
+                </h1>
+                <p class="dashboard-subtitle">
+                    Gérez les cours, les catégories et les utilisateurs de la plateforme EduTech.
+                </p>
 
-    <ul>
-        <li><a href="{{ path('admin_category_index') }}">Manage categories</a></li>
-        <li><a href="{{ path('admin_course_index') }}">Manage courses</a></li>
-    </ul>
+                <div class="user-welcome-card">
+                    <div class="user-avatar">{{ (app.user.name|default(app.user.email))|slice(0,1)|upper }}</div>
+                    <div>
+                        <div class="user-email">{{ app.user.name|default(app.user.email) }}</div>
+                        <div class="user-role">Administrateur</div>
+                    </div>
+                </div>
 
+                <div class="action-buttons">
+                    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">➕ Nouvelle Catégorie</a>
+                    <a href="{{ path('admin_course_new') }}" class="btn btn-primary">➕ Nouveau Cours</a>
+                    <a href="{{ path('admin_category_index') }}" class="btn btn-secondary">📂 Voir les Catégories</a>
+                    <a href="{{ path('admin_course_index') }}" class="btn btn-secondary">📚 Voir les Cours</a>
+                </div>
+            </div>
+
+            <div class="kpi-visual">
+                <div class="kpi-card">
+                    <span id="categories-count" class="kpi-value">{{ categories_count|default(0) }}</span>
+                    <span class="kpi-label">Catégories</span>
+                </div>
+                <div class="kpi-card">
+                    <span id="courses-count" class="kpi-value">{{ courses_count|default(0) }}</span>
+                    <span class="kpi-label">Cours</span>
+                </div>
+                <div class="kpi-card">
+                    <span id="users-count" class="kpi-value">{{ users_count|default(0) }}</span>
+                    <span class="kpi-label">Utilisateurs</span>
+                </div>
+            </div>
+        </div>
+
+        {# Floating Action Button (FAB) pour le retour #}
+        <a href="{{ path('admin_course_index') }}" class="return-fab" onclick="event.preventDefault(); goBackOrFallback();" aria-label="Retour" title="Retour">
+            <div class="return-fab-icon" aria-hidden="true">
+                <span class="return-fab-arrow">←</span>
+            </div>
+        </a>
+    </div>
+
+    {# Script minimal pour gérer le 'retour' avec fallback vers la liste des cours #}
+    <script>
+        function goBackOrFallback() {
+            try {
+                if (window.history && window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '{{ path('admin_course_index') }}';
+                }
+            } catch (e) {
+                // en cas d'erreur, rediriger vers la liste des cours
+                window.location.href = '{{ path('admin_course_index') }}';
+            }
+        }
+
+        // Gestion du clavier : fermer avec 'Echap'
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                goBackOrFallback();
+            }
+        });
+
+        // Dynamic metrics polling: fetch counts and update DOM
+        (function() {
+            const url = '{{ path('admin_metrics') }}';
+            const elCats = document.getElementById('categories-count');
+            const elCourses = document.getElementById('courses-count');
+            const elUsers = document.getElementById('users-count');
+
+            async function fetchMetrics() {
+                try {
+                    const res = await fetch(url, { cache: 'no-store', credentials: 'same-origin' });
+                    if (!res.ok) throw new Error('Network response not ok: ' + res.status);
+                    const data = await res.json();
+                    if (data.categories_count != null && elCats) elCats.textContent = data.categories_count;
+                    if (data.courses_count != null && elCourses) elCourses.textContent = data.courses_count;
+                    if (data.users_count != null && elUsers) elUsers.textContent = data.users_count;
+                } catch (e) {
+                    console.warn('Failed to fetch admin metrics:', e);
+                }
+            }
+
+            // initial fetch shortly after load (allow server-rendered numbers to show immediately)
+            setTimeout(fetchMetrics, 800);
+            // poll every 30 seconds
+            setInterval(fetchMetrics, 30000);
+        })();
+    </script>
 {% endblock %}

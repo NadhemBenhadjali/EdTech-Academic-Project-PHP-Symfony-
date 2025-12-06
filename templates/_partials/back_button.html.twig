@@ -1,0 +1,28 @@
+{# Partial: back_button.html.twig
+   Usage: include('_partials/back_button.html.twig', { fallback_route: 'admin_course_index', label: 'Retour' })
+   New optional parameters:
+     - parent_route: a route name to go to the parent page (preferred)
+     - parent_url: an absolute or relative URL to go to the parent page (preferred over history.back())
+#}
+
+{% set target = '#' %}
+
+{% if parent_url is defined and parent_url %}
+    {% set target = parent_url %}
+{% elseif parent_route is defined and parent_route %}
+    {% set target = path(parent_route) %}
+{% elseif fallback_route is defined and fallback_route %}
+    {% set target = path(fallback_route) %}
+{% endif %}
+
+{# If a parent was explicitly provided, do not attempt history.back() (we want deterministic behavior).
+   Otherwise keep the previous behavior: try history.back() when there's a valid referrer, fall back to the configured route.
+#}
+<a href="{{ target }}"
+   {% if not (parent_url is defined and parent_url) and not (parent_route is defined and parent_route) %}
+       onclick="if (document.referrer && document.referrer !== location.href) { history.back(); return false; }"
+   {% endif %}
+   class="btn-back" aria-label="{{ label|default('Retour') }}">
+    <span class="btn-back-icon" aria-hidden="true">←</span>
+    <span>{{ label|default('Retour') }}</span>
+</a>

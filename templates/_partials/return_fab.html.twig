@@ -1,0 +1,24 @@
+{# params: url (required), title (optional) #}
+{%- set title = title|default('Retour') -%}
+<style>
+/* Minimal FAB styles (scoped) */
+.return-fab-partial {
+  position: fixed; right: 28px; bottom: 28px; z-index: 9999;
+}
+.return-fab-partial .fab-btn {
+  width: 64px; height: 64px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:50%; background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+  border:1px solid rgba(255,255,255,0.06); color:inherit; text-decoration:none;
+  backdrop-filter: blur(6px); transition: transform .14s cubic-bezier(.25,.8,.25,1), box-shadow .14s ease;
+}
+.return-fab-partial .fab-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow:0 10px 30px rgba(0,0,0,0.06); }
+.return-fab-partial .fab-arrow { font-size:1.25rem; font-weight:900; }
+@media (max-width:700px) { .return-fab-partial { right:16px; bottom:16px } .return-fab-partial .fab-btn { width:52px; height:52px } }
+</style>
+
+<div class="return-fab-partial" role="navigation" aria-label="Retour">
+  <a href="{{ url }}" class="fab-btn" onclick="event.preventDefault(); (function(u){ try{ window.location.href = u; }catch(e){ window.location.assign(u);} })(this.getAttribute('data-url'));" data-url="{{ url }}" title="{{ title }}" aria-label="{{ title }}">
+    <span class="fab-arrow" aria-hidden="true">←</span>
+  </a>
+</div>
+

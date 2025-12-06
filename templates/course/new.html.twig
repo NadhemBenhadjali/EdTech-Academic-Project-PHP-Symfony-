@@ -1,11 +1,251 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Course{% endblock %}
+{% block title %}Créer un nouveau cours{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+
+        :root {
+            --details-bg-color: #111827;
+            --details-gradient-start: #4f46e5;
+            --details-gradient-end: #ec4899;
+            --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .details-page-wrapper {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--details-bg-color);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .details-page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background-image: radial-gradient(circle, var(--details-gradient-start) 0%, transparent 50%),
+                              radial-gradient(circle, var(--details-gradient-end) 0%, transparent 50%);
+            background-position: -200px -200px, 200px 200px;
+            background-repeat: no-repeat;
+            transform: translate(-50%, -50%);
+            filter: blur(150px) saturate(1.5);
+            opacity: 0.3;
+            animation: background-pan 20s linear infinite;
+        }
+
+        @keyframes background-pan {
+            0% { background-position: -200px -200px, 200px 200px; }
+            25% { background-position: 200px -200px, -200px 200px; }
+            50% { background-position: 200px 200px, -200px -200px; }
+            75% { background-position: -200px 200px, 200px -200px; }
+            100% { background-position: -200px -200px, 200px 200px; }
+        }
+
+        .details-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 32px 80px var(--shadow-color);
+            animation: details-entry 0.8s var(--transition-curve) backwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes details-entry {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .details-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .main-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .main-form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .main-form input, .main-form textarea, .main-form select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .main-form textarea { min-height: 120px; }
+
+        .main-form input:focus, .main-form textarea:focus, .main-form select:focus {
+            outline: none;
+            border-color: var(--details-gradient-start);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            border: none;
+            background: var(--accent-gradient);
+            background-size: 200% 100%;
+            color: var(--text-light);
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-light);
+        }
+
+        /* Ajout : bouton retour stylisé et sans boîte (utilisé dans l'en-tête) */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 1.1rem;
+            color: var(--text-light);
+            background: transparent; /* pas de boîte */
+            border: none;
+            padding: 0.15rem 0.6rem;
+            font-weight: 800;
+            font-size: 1.12rem; /* texte un peu plus grand */
+            border-radius: 999px; /* pill */
+            text-decoration: none;
+            transition: transform 0.16s var(--transition-curve), opacity 0.16s var(--transition-curve);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-back:focus {
+            outline: none;
+        }
+
+        .btn-back:focus-visible {
+            box-shadow: 0 0 0 6px rgba(79,70,229,0.12);
+            border-radius: 999px;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-3px);
+            opacity: 0.99;
+        }
+
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px; /* increased */
+            height: 64px; /* increased */
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+            color: var(--text-light);
+            font-weight: 900;
+            font-size: 1.5rem; /* larger arrow */
+            border: 1px solid rgba(255,255,255,0.06); /* thin translucent ring */
+            box-shadow: none; /* remove heavy shadow */
+            backdrop-filter: blur(6px);
+            transition: transform 0.16s var(--transition-curve), box-shadow 0.16s var(--transition-curve), background 0.16s var(--transition-curve);
+        }
+
+        /* subtle glow on hover without boxy shadow */
+        .btn-back:hover .btn-back-icon {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.06);
+            background: linear-gradient(135deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+        }
+
+        /* Masquer le texte sur petits écrans pour un bouton icon-only propre */
+        @media (max-width: 600px) {
+            .btn-back {
+                gap: 0.6rem;
+                padding: 0.05rem 0.15rem;
+            }
+            .btn-back span:last-child { display: none; }
+            .btn-back-icon { width: 52px; height: 52px; font-size: 1.15rem; }
+        }
+
+        /* Optionnel : texte du bouton plus espacé et légèrement éclairci */
+        .btn-back span:last-child {
+            letter-spacing: 0.2px;
+            color: rgba(229,231,235,0.95);
+        }
+
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Course</h1>
+<div class="details-page-wrapper">
+    <div class="details-container">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+            <a href="{{ path('admin_course_index') }}" onclick="if (document.referrer && document.referrer !== location.href) { history.back(); return false; }" class="btn-back" aria-label="Retour">
+                <span class="btn-back-icon" aria-hidden="true">←</span>
+                <span>Retour</span>
+            </a>
+            <h1 class="details-title">Créer un nouveau cours</h1>
+        </div>
 
-    {{ include('course/_form.html.twig') }}
-
-    <a href="{{ path('admin_course_index') }}">back to list</a>
+        {{ include('course/_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

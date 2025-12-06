@@ -18,21 +18,21 @@ class AttachmentType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Attachment name',
+                'label' => 'Nom de la pièce jointe',
                 'required' => false, // DB allows null; you can set required: true if you want
             ])
             ->add('url', UrlType::class, [
                 'label' => 'URL',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a URL',
+                        'message' => 'Veuillez entrer une URL',
                     ]),
                 ],
             ])
             ->add('course', EntityType::class, [
                 'class' => Course::class,
                 'choice_label' => 'title',
-                'label' => 'Course',
+                'label' => 'Cours',
             ])
         ;
     }

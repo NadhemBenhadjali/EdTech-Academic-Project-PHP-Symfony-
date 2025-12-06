@@ -79,6 +79,7 @@ final class QuizController extends AbstractController
         return $this->render('quiz/edit.html.twig', [
             'quiz' => $quiz,
             'form' => $form,
+            'course' => $quiz->getCourse(),
         ]);
     }
 

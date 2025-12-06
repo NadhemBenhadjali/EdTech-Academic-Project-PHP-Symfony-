@@ -1,44 +1,221 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My courses{% endblock %}
+{% block title %}Mes Cours{% endblock %}
 
 {% block body %}
-    <h1>My courses</h1>
+<div class="list-page-wrapper">
+    <div class="list-container">
+        <div class="list-header">
+            <div style="display:flex; align-items:center; gap:1rem;">
+                {{ include('_partials/back_button.html.twig', { parent_route: 'public_course_index', fallback_route: 'public_course_index', label: 'Retour' }) }}
+                <h1 class="list-title">Mes Cours</h1>
+            </div>
+        </div>
 
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div>{{ message }}</div>
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Course</th>
-            <th>Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for purchase in purchases %}
-            <tr>
-                <td>
-                    {% if purchase.course %}
-                        <a href="{{ path('public_course_show', {'id': purchase.course.id}) }}">
-                            {{ purchase.course.title }}
-                        </a>
-                    {% else %}
-                        (course deleted)
-                    {% endif %}
-                </td>
-                <td>
-                    {{ purchase.date ? purchase.date|date('Y-m-d H:i') : '' }}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">You are not enrolled in any courses yet.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="list-body">
+            {% if purchases is not empty %}
+                {% for purchase in purchases %}
+                    <div class="course-card">
+                        <div class="course-card-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                            {% if purchase.course %}
+                                <a href="{{ path('public_course_show', {'id': purchase.course.id}) }}" class="course-link">{{ purchase.course.title }}</a>
+                            {% else %}
+                                <span class="course-deleted">(course deleted)</span>
+                            {% endif %}
+                        </div>
+                        <div class="course-card-date">Enrolled on {{ purchase.date ? purchase.date|date('d/m/Y') : '' }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-records">
+                    <p>You are not enrolled in any courses yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+:root {
+    --list-bg-color: #111827;
+    --list-gradient-start: #4f46e5;
+    --list-gradient-end: #ec4899;
+    --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-light: #e5e7eb;
+    --text-muted: #9ca3af;
+    --accent-gradient: linear-gradient(90deg, var(--list-gradient-start) 0%, var(--list-gradient-end) 100%);
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.list-page-wrapper {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--list-bg-color);
+    color: var(--text-light);
+    padding: 4rem 1rem;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+.list-page-wrapper::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: radial-gradient(circle, var(--list-gradient-start), transparent 40%),
+                      radial-gradient(circle, var(--list-gradient-end), transparent 40%);
+    background-repeat: no-repeat;
+    filter: blur(150px) saturate(1.5);
+    opacity: 0.3;
+    animation: background-pan 20s linear infinite;
+    z-index: 0;
+}
+@keyframes background-pan {
+    0% { background-position: -200px -200px, 200px 200px; }
+    50% { background-position: 200px 200px, -200px -200px; }
+    100% { background-position: -200px -200px, 200px 200px; }
+}
+.list-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 32px 80px var(--shadow-color);
+    animation: list-entry 0.8s var(--transition-curve) backwards;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+@keyframes list-entry {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.list-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+.list-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.flash-message {
+    margin: 1.5rem 2rem 0;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(236, 72, 153, 0.1);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+    color: #fce7f3;
+    font-weight: 500;
+}
+.list-body {
+    padding: 2rem 2rem 2.5rem 2rem;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 2rem;
+}
+.course-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    transition: transform 0.18s var(--transition-curve), box-shadow 0.18s var(--transition-curve);
+    animation: card-fade-in 0.7s var(--transition-curve) backwards;
+}
+@keyframes card-fade-in {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.course-card:hover {
+    transform: translateY(-6px) scale(1.025);
+    box-shadow: 0 16px 48px rgba(79, 70, 229, 0.18);
+}
+.course-card-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.18rem;
+    font-weight: 800;
+    margin-bottom: 0.7rem;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.10);
+    min-height: 2.2em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+.course-card-title svg {
+    width: 1.2em;
+    height: 1.2em;
+    fill: #a5b4fc;
+}
+.course-link {
+    color: #a5b4fc;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.course-link:hover {
+    color: #ec4899;
+    text-decoration: underline;
+}
+.course-deleted {
+    color: var(--text-muted);
+    font-style: italic;
+}
+.course-card-date {
+    background: var(--accent-gradient);
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 7px;
+    padding: 3px 13px;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.10);
+    margin-bottom: 0.5rem;
+}
+.no-records {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    grid-column: 1/-1;
+}
+@media (max-width: 700px) {
+    .list-container {
+        padding: 0.5rem;
+    }
+    .list-title {
+        font-size: 1.3rem;
+    }
+    .list-body {
+        padding: 1rem 0.5rem 1.5rem 0.5rem;
+        gap: 1rem;
+    }
+    .course-card {
+        padding: 1rem 0.7rem 0.7rem 0.7rem;
+    }
+}
+</style>
 {% endblock %}

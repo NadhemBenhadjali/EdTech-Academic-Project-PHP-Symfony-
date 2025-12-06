@@ -1,18 +1,190 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Create account — EduTech Academy{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
 
-    {{ form_start(registrationForm) }}
-    {{ form_row(registrationForm.name) }}
-    {{ form_row(registrationForm.email) }}
-    {{ form_row(registrationForm.plainPassword) }}
-    {{ form_row(registrationForm.agreeTerms) }}
+<div class="login-wrapper register-wrapper">
 
-    <button type="submit" class="btn btn-primary">
-        Register
-    </button>
-    {{ form_end(registrationForm) }}
+    <div class="login-left" aria-hidden="true">
+        <div class="left-inner">
+            <h1>Learn, Grow, Succeed</h1>
+            <p>Create your student account to access courses, track progress and join the community.</p>
+            <figure class="illustration" aria-hidden="true">
+                <svg width="240" height="140" viewBox="0 0 240 140" style="fill:none">
+                    <defs>
+                        <linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed" /><stop offset="1" stop-color="#06b6d4" /></linearGradient>
+                    </defs>
+                    <rect x="0" y="8" width="240" height="124" rx="12" style="fill:url(#rg);opacity:0.12"/>
+                    <g style="fill:#fff;opacity:0.9">
+                        <circle cx="40" cy="40" r="6" />
+                        <circle cx="80" cy="60" r="4" />
+                        <circle cx="120" cy="36" r="5" />
+                        <rect x="150" y="60" width="44" height="6" rx="3" />
+                    </g>
+                </svg>
+            </figure>
+        </div>
+    </div>
+
+    <div class="login-card" role="main">
+        <a class="logo" href="/">
+            <img src="{{ asset('images/logo.jpg') }}" alt="EduTech Academy logo" width="44" height="44" />
+            <span>EduTech Academy</span>
+        </a>
+        <h2 class="title">Create your account</h2>
+        <p class="subtitle">Sign up and start learning today</p>
+
+        {{ form_start(registrationForm, {'attr': {'class': 'login-form', 'novalidate':'novalidate'}}) }}
+
+            {% if registrationForm.vars.errors|length > 0 %}
+                <div class="alert-error" role="alert">Please check the form for errors.</div>
+            {% endif %}
+
+            <div class="input-group">
+                <label for="{{ registrationForm.name.vars.id }}">Full name</label>
+                {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control', 'id': registrationForm.name.vars.id, 'placeholder':'Alexandra Doe', 'autocomplete':'name'}}) }}
+                {{ form_errors(registrationForm.name) }}
+            </div>
+
+            <div class="input-group">
+                <label for="{{ registrationForm.email.vars.id }}">Email</label>
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'id': registrationForm.email.vars.id, 'placeholder':'you@domain.com', 'autocomplete':'email', 'inputmode':'email'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="input-group">
+                <label for="{{ registrationForm.plainPassword.vars.id }}">Password</label>
+                <div class="password-row">
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': registrationForm.plainPassword.vars.id, 'placeholder':'Create a strong password', 'autocomplete':'new-password', 'aria-describedby': registrationForm.plainPassword.vars.id ~ '_strength'}}) }}
+                    <button type="button" class="icon-btn" onclick="togglePassword(event)" aria-label="Toggle password visibility">
+                        <svg class="eye" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5c5 0 9 4 9 7s-4 7-9 7S3 17 3 12s4-7 9-7zm0 2a5 5 0 1 0 0 10A5 5 0 0 0 12 7z"/></svg>
+                    </button>
+                </div>
+                <div id="{{ registrationForm.plainPassword.vars.id }}_strength" class="strength">
+                    <div class="meter" aria-hidden="true"><div class="meter-fill"></div></div>
+                    <div class="meter-desc">Use at least 8 characters with a mix of letters and numbers.</div>
+                </div>
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            <div class="options" style="margin-top:8px;">
+                <label class="remember">{{ form_widget(registrationForm.agreeTerms, {'attr': {'class':'remember-checkbox'}}) }} I agree to the <a href="#">Terms</a></label>
+                <a href="{{ path('app_login') }}" class="forgot">Already have an account?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Create account</button>
+
+        {{ form_end(registrationForm) }}
+
+    </div>
+
+</div>
+
+<style>
+    /* Reuse professional login styles, tweaked for register */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600&display=swap');
+
+    :root{ --bg-a: #0b1228; --bg-b: #07203f; --card: #ffffff; --accent-1: #0ea5a4; --accent-2: #7c3aed; --muted: #6b7280; --surface-shadow: 0 16px 50px rgba(2,6,23,0.28); --radius:18px }
+
+    body{margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background:linear-gradient(135deg,var(--bg-a), var(--bg-b)); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px}
+
+    .login-wrapper{width:100%; max-width:980px; display:flex; border-radius:var(--radius); overflow:hidden; box-shadow:var(--surface-shadow); background:transparent}
+    .register-wrapper .login-left{flex:1; padding:42px 34px}
+
+    .login-left{flex:1; background:linear-gradient(180deg,#07396f 0%, #051737 100%); color: #e6f2ff; display:flex; align-items:center}
+    .left-inner{max-width:420px}
+    .login-left h1{margin:0 0 12px; font-family:Poppins, Inter, sans-serif; font-size:30px}
+    .login-left p{margin:0 0 20px; color:rgba(230,242,255,0.9); font-size:15px}
+
+    .login-card{width:420px; background:var(--card); padding:30px 34px; display:flex; flex-direction:column; justify-content:flex-start; gap:8px; border-radius:0 18px 18px 0}
+    .logo{display:flex; gap:12px; align-items:center; text-decoration:none}
+    .logo img{border-radius:8px; box-shadow:0 6px 18px rgba(124,58,237,0.12)}
+    .logo span{font-weight:700; color:#07123a}
+
+    .title{margin:6px 0 0; font-size:20px; color:#07123a; font-weight:700}
+    .subtitle{margin:0 0 8px; color:var(--muted); font-size:13px}
+
+    .login-form{margin-top:6px}
+    .input-group{display:flex; flex-direction:column; align-items:center; margin:10px 0}
+    .input-group label{align-self:flex-start; margin-left:6%; font-weight:600; font-size:13px; color:#3b4253}
+
+    /* Use default Symfony widget styles but constrain width */
+    .input-group .form-control, input[type="text"], input[type="email"], input[type="password"]{width:84%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef6; background:#fff; font-size:14px; color:#0b1228}
+    .input-group .form-control::placeholder, input::placeholder{color:#9aa4b2}
+    .input-group .form-control:focus, input:focus{outline:none; box-shadow:0 8px 30px rgba(124,58,237,0.12); transform:translateY(-2px); border-color:var(--accent-2)}
+
+    .password-row{position:relative; width:84%; display:flex}
+    .password-row .form-control{flex:1}
+    .icon-btn{position:absolute; right:10px; top:6px; height:36px; width:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer}
+    .icon-btn .eye{width:18px; height:18px; color:#6b7280}
+
+    .strength{width:84%; margin-top:6px}
+    .meter{height:8px; background:#eef3fb; border-radius:10px; overflow:hidden}
+    .meter-fill{height:100%; width:0; background:linear-gradient(90deg, #ef4444, #f59e0b, #10b981); transition:width .25s}
+    .meter-desc{font-size:0.82rem; color:var(--muted); margin-top:0.4rem}
+
+    .options{width:84%; margin:6px auto 0; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .remember-checkbox{width:16px; height:16px}
+    .forgot{color:var(--accent-2); text-decoration:none; font-weight:600}
+
+    .btn-login{width:84%; margin:14px auto 0; padding:12px 16px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--accent-2),var(--accent-1)); color:#fff; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 10px 30px rgba(99,102,241,0.12)}
+    .btn-login:hover{transform:translateY(-3px); box-shadow:0 18px 44px rgba(99,102,241,0.18)}
+
+    .alert-error{width:84%; margin:0 auto 8px; background:#ffecee; color:#8b1d1d; padding:12px 14px; border-radius:10px; font-weight:600}
+
+    .signup-text{width:84%; margin:8px auto 0; text-align:center; color:var(--muted); font-size:13px}
+
+    @media (max-width:900px){
+        .login-wrapper{flex-direction:column}
+        .login-left{padding:28px 20px; border-radius:18px 18px 0 0}
+        .login-card{width:100%; padding:26px; border-radius:0 0 18px 18px}
+        .input-group .form-control, input, .alert-error,.options,.btn-login{width:88%}
+    }
+
+    @media (max-width:480px){
+        body{padding:18px}
+        .login-left h1{font-size:22px}
+        .login-card{padding:20px}
+        .input-group .form-control{padding:10px}
+    }
+</style>
+
+<script>
+    function togglePassword(evt){
+        const input = document.querySelector('#{{ registrationForm.plainPassword.vars.id }}');
+        if(!input) return;
+        const btn = evt?.currentTarget || document.querySelector('.icon-btn');
+        if(input.type === 'password'){ input.type = 'text'; if(btn) btn.setAttribute('aria-pressed','true'); }
+        else{ input.type = 'password'; if(btn) btn.setAttribute('aria-pressed','false'); }
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        const input = document.querySelector('#{{ registrationForm.plainPassword.vars.id }}');
+        const fill = document.querySelector('.meter-fill');
+        const desc = document.querySelector('.meter-desc');
+        if(!input || !fill) return;
+
+        function scorePassword(pw){
+            let score = 0;
+            if(pw.length >= 8) score += 2;
+            if(/[a-z]/.test(pw)) score += 1;
+            if(/[A-Z]/.test(pw)) score += 1;
+            if(/[0-9]/.test(pw)) score += 1;
+            if(/[^a-zA-Z0-9]/.test(pw)) score += 1;
+            return Math.min(score,5);
+        }
+
+        input.addEventListener('input', function(){
+            const s = scorePassword(this.value || '');
+            const pct = Math.round((s/5)*100);
+            fill.style.width = pct + '%';
+            if(s <= 2){ desc.textContent = 'Weak — use 8+ chars with numbers and symbols'; desc.style.color = '#ef4444'; }
+            else if(s === 3){ desc.textContent = 'Fair — add uppercase or symbols'; desc.style.color = '#f59e0b'; }
+            else if(s >= 4){ desc.textContent = 'Strong — good to go'; desc.style.color = '#10b981'; }
+        });
+
+    });
+</script>
+
 {% endblock %}

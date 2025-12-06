@@ -3,41 +3,71 @@
 {% block title %}Attachment index{% endblock %}
 
 {% block body %}
-    <h1>Attachment index</h1>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Url</th>
-            <th>Course</th>
-            <th>actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for attachment in attachments %}
-            <tr>
-                <td>{{ attachment.id }}</td>
-                <td>
-                    <a href="{{ attachment.url }}" target="_blank">
-                        {{ attachment.url }}
-                    </a>
-                </td>
-                <td>
-                    {{ attachment.course ? attachment.course.title : '' }}
-                </td>
-                <td>
-                    <a href="{{ path('admin_attachment_show', {'id': attachment.id}) }}">show</a>
-                    <a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+:root{
+    --details-bg-color: #111827;
+    --details-gradient-start: #4f46e5;
+    --details-gradient-end: #ec4899;
+    --glass-bg: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+    --glass-border: rgba(255,255,255,0.12);
+    --text-light: #e5e7eb;
+    --text-muted: #9ca3af;
+    --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+}
+.details-page-wrapper{font-family:Inter, sans-serif; background-color:var(--details-bg-color); padding:3rem 1rem; display:flex; justify-content:center;}
+.details-container.course-details-glass{width:100%; max-width:900px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:20px; padding:1.8rem; color:var(--text-light);}
+.details-title{font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; font-size:1.6rem; text-align:center; margin-bottom:1rem; background:linear-gradient(90deg,#d1d5db 0%,#f9fafb 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
+.attachments-table{width:100%; border-collapse:collapse; margin-top:1rem;}
+.attachments-table th, .attachments-table td{padding:0.75rem 0.8rem; text-align:left; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-light);}
+.attachments-table thead th{color:var(--text-muted); font-weight:700; font-size:0.95rem}
+.action-links a{display:inline-block; margin-right:0.5rem; padding:0.45rem 0.6rem; border-radius:8px; font-weight:600; font-size:0.9rem; text-decoration:none}
+.action-links a.show{background:rgba(79,70,229,0.12); color:#dbeafe}
+.action-links a.edit{background:linear-gradient(90deg,#06b6d4 0%, #06b6d4 100%); color:white}
+.no-records{padding:1rem; color:var(--text-muted);}
+</style>
 
-    {# We don't have a generic "new" without a course id, attachments are created from the course page #}
+<div class="details-page-wrapper">
+    <div class="details-container course-details-glass">
+
+        <h1 class="details-title">Attachment index</h1>
+
+        <table class="attachments-table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Url</th>
+                <th>Course</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for attachment in attachments %}
+                <tr>
+                    <td>{{ attachment.id }}</td>
+                    <td>
+                        <a href="{{ attachment.url }}" target="_blank" style="color:var(--text-light); text-decoration:underline">{{ attachment.url }}</a>
+                    </td>
+                    <td>
+                        {{ attachment.course ? attachment.course.title : '' }}
+                    </td>
+                    <td class="action-links">
+                        <a class="show" href="{{ path('admin_attachment_show', {'id': attachment.id}) }}">show</a>
+                        <a class="edit" href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="no-records">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {# We don't have a generic "new" without a course id, attachments are created from the course page #}
+
+    </div>
+</div>
+
 {% endblock %}

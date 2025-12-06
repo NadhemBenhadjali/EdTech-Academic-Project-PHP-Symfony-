@@ -1,35 +1,235 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Category index{% endblock %}
+{% block title %}Liste des Catégories{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+
+        :root {
+            --list-bg-color: #111827;
+            --list-gradient-start: #4f46e5;
+            --list-gradient-end: #ec4899;
+            --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-gradient: linear-gradient(90deg, var(--list-gradient-start) 0%, var(--list-gradient-end) 100%);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .list-page-wrapper {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--list-bg-color);
+            color: var(--text-light);
+            display: flex;
+            align-items: flex-start; /* Align to top */
+            justify-content: center;
+            padding: 4rem 1rem;
+            min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+            position: relative;
+            overflow: auto; /* Allow scrolling */
+        }
+
+        .list-page-wrapper::before {
+            content: '';
+            position: fixed; /* Fixed position to stay behind content */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-image: radial-gradient(circle at 15% 15%, var(--list-gradient-start), transparent 40%),
+                              radial-gradient(circle at 85% 75%, var(--list-gradient-end), transparent 40%);
+            background-repeat: no-repeat;
+            filter: blur(150px) saturate(1.5);
+            opacity: 0.3;
+            animation: background-pan 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes background-pan {
+            0% { background-position: -200px -200px, 200px 200px; }
+            25% { background-position: 200px -200px, -200px 200px; }
+            50% { background-position: 200px 200px, -200px -200px; }
+            75% { background-position: -200px 200px, 200px -200px; }
+            100% { background-position: -200px -200px, 200px 200px; }
+        }
+
+        .list-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 32px 80px var(--shadow-color);
+            animation: list-entry 0.8s var(--transition-curve) backwards;
+            position: relative;
+            z-index: 1;
+            overflow: hidden; /* To contain the list items */
+        }
+
+        @keyframes list-entry {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .list-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .list-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .list-body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-item {
+            display: grid;
+            grid-template-columns: 50px 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            transition: background-color 0.3s ease;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .list-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .item-id {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .item-name {
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        .item-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .list-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: right;
+        }
+
+        .btn-action {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            background-size: 200% 100%;
+            color: var(--text-light);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .btn-back-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Category index</h1>
+<div class="list-page-wrapper">
+    <div class="list-container">
+        <div class="list-header">
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <a href="{{ path('admin_category_index') }}" onclick="if (document.referrer && document.referrer !== location.href) { history.back(); return false; }" class="btn-back" aria-label="Retour">
+                    <span class="btn-back-icon" aria-hidden="true">←</span>
+                    <span>Retour</span>
+                </a>
+                <h1 class="list-title">Catégories</h1>
+            </div>
+        </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for category in categories %}
-            <tr>
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                <td>
-                    <a href="{{ path('admin_category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('admin_category_edit', {'id': category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="list-body">
+            {% if categories is not empty %}
+                {% for category in categories %}
+                    <div class="list-item">
+                        <span class="item-id">{{ category.id }}</span>
+                        <span class="item-name">{{ category.name }}</span>
+                        <div class="item-actions">
+                            <a href="{{ path('admin_category_show', {'id': category.id}) }}" class="btn-action btn-secondary">Voir</a>
+                            <a href="{{ path('admin_category_edit', {'id': category.id}) }}" class="btn-action btn-secondary">Modifier</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-records">
+                    <p>Aucune catégorie trouvée.</p>
+                </div>
+            {% endif %}
+        </div>
 
-    <a href="{{ path('admin_category_new') }}">Create new</a>
+        <div class="list-footer">
+            <a href="{{ path('admin_category_new') }}" class="btn-action btn-primary">Créer une nouvelle catégorie</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

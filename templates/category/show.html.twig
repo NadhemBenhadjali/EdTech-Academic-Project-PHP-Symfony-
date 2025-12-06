@@ -1,26 +1,233 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Category{% endblock %}
+{% block title %}Détails de la Catégorie{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+
+        :root {
+            --details-bg-color: #111827;
+            --details-gradient-start: #4f46e5;
+            --details-gradient-end: #ec4899;
+            --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .details-page-wrapper {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--details-bg-color);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .details-page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background-image: radial-gradient(circle, var(--details-gradient-start) 0%, transparent 50%),
+                              radial-gradient(circle, var(--details-gradient-end) 0%, transparent 50%);
+            background-position: -200px -200px, 200px 200px;
+            background-repeat: no-repeat;
+            transform: translate(-50%, -50%);
+            filter: blur(150px) saturate(1.5);
+            opacity: 0.3;
+            animation: background-pan 20s linear infinite;
+        }
+
+        @keyframes background-pan {
+            0% { background-position: -200px -200px, 200px 200px; }
+            25% { background-position: 200px -200px, -200px 200px; }
+            50% { background-position: 200px 200px, -200px -200px; }
+            75% { background-position: -200px 200px, 200px -200px; }
+            100% { background-position: -200px -200px, 200px 200px; }
+        }
+
+        .details-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 32px 80px var(--shadow-color);
+            animation: details-entry 0.8s var(--transition-curve) backwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes details-entry {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .details-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 1rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .details-grid dt {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .details-grid dd {
+            font-weight: 500;
+            background: rgba(0,0,0,0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .actions-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 2rem;
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            background-size: 200% 100%;
+            color: var(--text-light);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        /* Floating Action Button (FAB) - retour vers la page parent */
+        .return-fab {
+            position: fixed;
+            right: 28px;
+            bottom: 28px;
+            z-index: 60;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-light);
+            border-radius: 50%;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 180ms cubic-bezier(.25,.8,.25,1), box-shadow 180ms ease;
+        }
+        .return-fab:focus { outline: none; }
+        .return-fab:focus-visible { box-shadow: 0 0 0 8px rgba(79,70,229,0.10); border-radius: 50%; }
+        .return-fab-icon {
+            width: 100%; height: 100%;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+            color: var(--text-light);
+            font-weight: 900; font-size: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: none; backdrop-filter: blur(6px); border-radius: 50%;
+            transition: transform 140ms cubic-bezier(.25,.8,.25,1), box-shadow 140ms ease, background 140ms ease;
+        }
+        .return-fab:hover .return-fab-icon { transform: translateY(-4px) scale(1.03); box-shadow: 0 10px 30px rgba(79,70,229,0.06); }
+        @media (max-width:700px) { .return-fab { width:52px; height:52px; right:16px; bottom:16px; } }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Category</h1>
+<div class="details-page-wrapper">
+    <div class="details-container">
+        <h1 class="details-title">Détails de la Catégorie</h1>
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ category.id }}</td>
-        </tr>
-        <tr>
-            <th>Name</th>
-            <td>{{ category.name }}</td>
-        </tr>
-        </tbody>
-    </table>
+        <dl class="details-grid">
+            <dt>ID</dt>
+            <dd>{{ category.id }}</dd>
 
-    <a href="{{ path('admin_category_index') }}">back to list</a>
+            <dt>Nom</dt>
+            <dd>{{ category.name }}</dd>
+        </dl>
 
-    <a href="{{ path('admin_category_edit', {'id': category.id}) }}">edit</a>
+        <div class="actions-footer">
+            <a href="{{ path('admin_category_index') }}" class="btn-action btn-secondary">Retour à la liste</a>
+            <a href="{{ path('admin_category_edit', {'id': category.id}) }}" class="btn-action btn-primary">Modifier</a>
+            {{ include('category/_delete_form.html.twig') }}
+        </div>
+    </div>
 
-    {{ include('category/_delete_form.html.twig') }}
+    {# FAB de retour vers le parent (page liste catégories) #}
+    <a href="{{ path('admin_category_index') }}" class="return-fab" onclick="event.preventDefault(); goToParent('{{ path('admin_category_index') }}');" aria-label="Retour" title="Retour vers la liste">
+        <div class="return-fab-icon" aria-hidden="true"><span class="return-fab-arrow">←</span></div>
+    </a>
+</div>
+
+<script>
+    function goToParent(url) {
+        try {
+            // Navigation explicite vers l'URL parent (ne dépend pas de l'historique)
+            window.location.href = url;
+        } catch (e) {
+            // fallback
+            window.location.assign(url);
+        }
+    }
+</script>
 {% endblock %}

@@ -1,6 +1,21 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-<button class="btn">
+{{ form_start(form, {'attr': {'class': 'main-form'}}) }}
+
+{% for child in form %}
+    {# Render visible fields inside .form-group. Hidden fields (like CSRF tokens) will be rendered later with form_rest #}
+    {% if child.vars.block_prefixes is defined and 'hidden' in child.vars.block_prefixes %}
+        {# skip hidden here, will be rendered by form_rest #}
+    {% else %}
+        <div class="form-group">
+            {{ form_label(child) }}
+            {{ form_widget(child) }}
+            {{ form_errors(child) }}
+        </div>
+    {% endif %}
+{% endfor %}
+
+{{ form_rest(form) }}
+
+<button type="submit" class="btn-submit">
     {{ button_label|default('Save') }}
 </button>
 {{ form_end(form) }}

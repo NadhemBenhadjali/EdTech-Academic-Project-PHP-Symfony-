@@ -3,96 +3,696 @@
 {% block title %}{{ course.title }}{% endblock %}
 
 {% block body %}
-    <h1>{{ course.title }}</h1>
+<div class="details-page-wrapper">
+    <div class="details-container course-details-glass">
+        <div style="display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1rem;">
+            <div style="display:flex; align-items:center;">
+                {{ include('_partials/back_button.html.twig', { parent_route: 'teacher_course_index', fallback_route: 'teacher_course_index', label: 'Retour' }) }}
+            </div>
+            <div style="text-align:center;">
+                <h1 class="details-title">{{ course.title }}</h1>
+            </div>
+            <div><!-- placeholder for right side to keep center alignment --></div>
+        </div>
+        <div class="course-meta">
+            <span class="course-category">{{ course.category ? course.category.name : 'Uncategorized' }}</span>
+            <span class="price-badge">{{ course.price|number_format(2, '.', ' ') }} €</span>
+        </div>
+        <p class="course-description">{{ course.description }}</p>
 
-    <p><strong>Category:</strong> {{ course.category ? course.category.name : '' }}</p>
-    <p><strong>Price:</strong> {{ course.price }}</p>
-    <p>{{ course.description }}</p>
-
-    {# Attachments managed by this teacher #}
-    <h2>Attachments</h2>
-    <ul>
-        {% for attachment in course.attachments %}
-            <li>
-                <a href="{{ attachment.url }}" target="_blank">
-                    {{ attachment.name ?: attachment.url }}
-                </a>
-                (<a href="{{ path('teacher_attachment_edit', {'id': attachment.id}) }}">edit</a>)
-                <form method="post"
-                      action="{{ path('teacher_attachment_delete', {'id': attachment.id}) }}"
-                      style="display:inline"
-                      onsubmit="return confirm('Delete this attachment?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ attachment.id) }}">
-                    <button class="btn btn-link">delete</button>
-                </form>
-            </li>
-        {% else %}
-            <li>No attachments yet.</li>
-        {% endfor %}
-    </ul>
-    <p>
-        <a href="{{ path('teacher_attachment_new_for_course', {'id': course.id}) }}">
-            Add attachment
-        </a>
-    </p>
-
-    {# Quizzes (external links) managed by teacher #}
-    <h2>Quizzes</h2>
-    <ul>
-        {% for quiz in course.quizzes %}
-            <li>
-                {{ quiz.title }}
-                {% if quiz.url %}
-                    – <a href="{{ quiz.url }}" target="_blank">Open quiz</a>
+        <div class="course-section">
+            <h2>Attachments</h2>
+            <ul class="section-list">
+                {% for attachment in course.attachments %}
+                    <li>
+                        <a href="{{ attachment.url }}" target="_blank" class="attachment-link">
+                            {{ attachment.name ?: attachment.url }}
+                        </a>
+                        <a href="{{ path('teacher_attachment_edit', {'id': attachment.id}) }}" class="btn-action">Edit</a>
+                        <form method="post"
+                              action="{{ path('teacher_attachment_delete', {'id': attachment.id}) }}"
+                              style="display:inline"
+                              onsubmit="return confirm('Delete this attachment?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ attachment.id) }}">
+                            <button class="btn-action btn-delete" type="submit">Delete</button>
+                        </form>
+                    </li>
                 {% else %}
-                    – (no URL set)
-                {% endif %}
-                (<a href="{{ path('teacher_quiz_edit', {'id': quiz.id}) }}">edit</a>)
-                <form method="post"
-                      action="{{ path('teacher_quiz_delete', {'id': quiz.id}) }}"
-                      style="display:inline"
-                      onsubmit="return confirm('Delete this quiz?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
-                    <button class="btn btn-link">delete</button>
-                </form>
-            </li>
-        {% else %}
-            <li>No quizzes yet.</li>
-        {% endfor %}
-    </ul>
-    <p>
-        <a href="{{ path('teacher_quiz_new_for_course', {'id': course.id}) }}">
-            Add quiz
-        </a>
-    </p>
+                    <li class="empty">No attachments yet.</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ path('teacher_attachment_new_for_course', {'id': course.id}) }}" class="btn-create">+ Add attachment</a>
+        </div>
 
-    {# Enrolled students #}
-    <h2>Enrolled students</h2>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Student</th>
-            <th>Email</th>
-            <th>Enrolled at</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for purchase in purchases %}
-            <tr>
-                <td>{{ purchase.user.name }}</td>
-                <td>{{ purchase.user.email }}</td>
-                <td>{{ purchase.date ? purchase.date|date('Y-m-d H:i') : '' }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">No students enrolled yet.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="course-section">
+            <h2>Quizzes</h2>
+            <ul class="section-list">
+                {% for quiz in course.quizzes %}
+                    <li>
+                        {{ quiz.title }}
+                        {% if quiz.url %}
+                            – <a href="{{ quiz.url }}" target="_blank" class="btn-quiz">Open quiz</a>
+                        {% else %}
+                            – <span class="quiz-unavailable">(no URL set)</span>
+                        {% endif %}
+                        <a href="{{ path('teacher_quiz_edit', {'id': quiz.id}) }}" class="btn-action">Edit</a>
+                        <form method="post"
+                              action="{{ path('teacher_quiz_delete', {'id': quiz.id}) }}"
+                              style="display:inline"
+                              onsubmit="return confirm('Delete this quiz?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
+                            <button class="btn-action btn-delete" type="submit">Delete</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="empty">No quizzes yet.</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ path('teacher_quiz_new_for_course', {'id': course.id}) }}" class="btn-create">+ Add quiz</a>
+        </div>
 
-    <p>
-        <a href="{{ path('teacher_course_edit', {'id': course.id}) }}">Edit course</a> |
-        <a href="{{ path('teacher_course_index') }}">Back to my courses</a>
-    </p>
+        <div class="course-section">
+            <h2>Enrolled students</h2>
+            <div class="students-controls">
+                <div class="students-left">
+                    <label class="select-all-wrap">
+                        <input type="checkbox" id="select-all">
+                        <span>Select all</span>
+                    </label>
+                    <div class="students-count">{{ purchases|length }} enrolled</div>
+                </div>
+                <div class="students-right">
+                    <div class="students-search">
+                        <input type="search" id="student-search" placeholder="Search students..." aria-label="Search students">
+                    </div>
+                    <button id="export-visible" class="btn-action small">Export visible</button>
+                </div>
+            </div>
+
+            <div class="students-table-wrapper">
+                <table class="students-table">
+                    <thead>
+                        <tr>
+                            <th class="col-select"></th>
+                            <th class="col-student" data-sort="name">Student <span class="sort-indicator" aria-hidden="true"></span></th>
+                            <th class="col-email" data-sort="email">Email <span class="sort-indicator" aria-hidden="true"></span></th>
+                            <th class="col-date">Enrolled at</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for purchase in purchases %}
+                        {% set cb_id = 'select-' ~ loop.index0 %}
+                        <tr class="student-row" data-name="{{ purchase.user.name|e }}" data-email="{{ purchase.user.email|e }}">
+                            <td class="col-select">
+                                <input type="checkbox" id="{{ cb_id }}" class="student-select" aria-labelledby="label-{{ cb_id }}">
+                                <label id="label-{{ cb_id }}" class="sr-only" for="{{ cb_id }}">Select {{ purchase.user.name }}</label>
+                            </td>
+                            <td class="col-student">
+                                <div class="student-item">
+                                    <div class="student-avatar" aria-hidden="true">
+                                        {# build initials from name (safe access) #}
+                                        {% set parts = purchase.user.name ? purchase.user.name|split(' ') : ['?'] %}
+                                        {% set initials = (parts[0]|default('')|slice(0,1)|upper) ~ (parts|length > 1 ? (parts[1]|default('')|slice(0,1)|upper) : '') %}
+                                        {{ initials }}
+                                    </div>
+                                    <div class="student-info">
+                                        <div class="student-name">{{ purchase.user.name }}</div>
+                                        <div class="student-sub">{{ purchase.user.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="col-email"><a href="mailto:{{ purchase.user.email }}">{{ purchase.user.email }}</a></td>
+                            <td class="col-date">{{ purchase.date ? purchase.date|date('Y-m-d H:i') : '' }}</td>
+                            <td class="col-actions">
+                                <a href="mailto:{{ purchase.user.email }}" class="btn-action small">Message</a>
+                                {# optional: remove/unenroll form could go here #}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty">No students enrolled yet.</td>
+                        </tr>
+                    {% endfor %}
+                    {# row shown when filtering yields no results #}
+                    <tr id="students-empty-filter" style="display:none">
+                        <td colspan="5" class="empty">No matching students.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="course-actions">
+            <a href="{{ path('teacher_course_edit', {'id': course.id}) }}" class="btn-action">Edit course</a>
+            {# back-link replaced by shared back_button partial above #}
+        </div>
+    </div>
+</div>
+
+{# Hidden helper elements so static analyzer recognizes dynamic classes (no visual impact) #}
+<div style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;" aria-hidden="true">
+    <span class="sort-asc"></span>
+    <span class="sort-desc"></span>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+:root {
+    --details-bg-color: #111827;
+    --details-gradient-start: #4f46e5;
+    --details-gradient-end: #ec4899;
+    --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-light: #e5e7eb;
+    --text-muted: #9ca3af;
+    --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.details-page-wrapper {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--details-bg-color);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem; /* plus compact verticalement pour plus d'espace interne */
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+.details-page-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 800px;
+    background-image: radial-gradient(circle, var(--details-gradient-start) 0%, transparent 50%),
+                      radial-gradient(circle, var(--details-gradient-end) 0%, transparent 50%);
+    background-position: -200px -200px, 200px 200px;
+    background-repeat: no-repeat;
+    transform: translate(-50%, -50%);
+    filter: blur(150px) saturate(1.5);
+    opacity: 0.3;
+    animation: background-pan 20s linear infinite;
+}
+@keyframes background-pan {
+    0% { background-position: -200px -200px, 200px 200px; }
+    25% { background-position: 200px -200px, -200px 200px; }
+    50% { background-position: 200px 200px, -200px -200px; }
+    75% { background-position: -200px 200px, 200px -200px; }
+    100% { background-position: -200px -200px, 200px 200px; }
+}
+.details-container.course-details-glass {
+    width: 100%;
+    max-width: 1100px; /* increased width to make the course box larger */
+    margin: 2rem auto;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; /* slightly less round for a professional look */
+    padding: 3rem 2.5rem; /* larger interior spacing */
+    box-shadow: 0 40px 120px rgba(2,6,23,0.5);
+    animation: details-entry 0.8s var(--transition-curve) backwards;
+    position: relative;
+    z-index: 1;
+}
+@keyframes details-entry {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.details-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.course-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+.course-category {
+    background: var(--accent-gradient);
+    color: #fff;
+    font-size: 0.98rem;
+    font-weight: 600;
+    border-radius: 7px;
+    padding: 4px 15px;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.10);
+}
+.price-badge {
+    display: inline-block;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 4px 16px;
+    font-size: 1.08rem;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.10);
+    letter-spacing: 0.01em;
+}
+.course-description {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+    font-size: 1.08rem;
+}
+.course-section {
+    margin-top: 2.2rem;
+}
+.course-section h2 {
+    font-size: 1.18rem;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.01em;
+}
+.section-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 0.7rem 0;
+}
+.section-list li {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    color: var(--text-light);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    flex-wrap: wrap;
+}
+.section-list li.empty {
+    font-style: italic;
+    color: var(--text-muted);
+    background: none;
+    box-shadow: none;
+    display: block;
+}
+.section-list li:hover {
+    background: rgba(79, 70, 229, 0.10);
+}
+.attachment-link {
+    color: #a5b4fc;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.attachment-link:hover {
+    color: #ec4899;
+}
+
+/* Buttons — professional pill style */
+.btn-action, .btn-quiz, .btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text-light);
+    border-radius: 999px; /* pill */
+    border: 1px solid rgba(255,255,255,0.06);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform 120ms var(--transition-curve), box-shadow 120ms var(--transition-curve), background 180ms ease;
+    box-shadow: none;
+}
+
+/* Primary CTA filled */
+.btn-create {
+    background: var(--accent-gradient);
+    color: #fff;
+    border: none;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.12);
+}
+
+.btn-action:hover, .btn-create:hover, .btn-quiz:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.25);
+}
+
+.btn-action.small, .btn-action.small:link, .btn-action.small:visited, .btn-action.small:hover {
+    padding: 6px 10px;
+    font-size: 0.88rem;
+    border-radius: 8px;
+}
+
+/* Danger button subtle */
+.btn-delete {
+    background: linear-gradient(90deg, #ef4444 0%, #f43f5e 100%);
+    color: #fff;
+    border: none;
+    box-shadow: 0 6px 20px rgba(244,63,94,0.12);
+}
+.btn-delete:hover { transform: translateY(-2px); }
+
+/* Export button style (outline but refined) */
+#export-visible {
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-light);
+}
+#export-visible:hover { background: rgba(255,255,255,0.05); box-shadow: 0 8px 24px rgba(16,24,40,0.08); }
+
+/* Students controls — refined and professional */
+.students-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.8rem;
+    padding: 10px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 12px;
+}
+
+.students-left {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.select-all-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text-light);
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.02);
+}
+
+.select-all-wrap input[type="checkbox"] {
+    width: 18px; height: 18px; margin: 0; cursor: pointer;
+    accent-color: rgba(79,70,229,0.95);
+}
+
+.students-count {
+    color: var(--text-light);
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    background: linear-gradient(90deg, rgba(79,70,229,0.06), rgba(236,72,153,0.03));
+}
+
+.students-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.students-search {
+    position: relative;
+    width: 340px;
+    max-width: 46vw;
+}
+
+.students-search input[type="search"] {
+    width: 100%;
+    padding: 10px 14px 10px 42px; /* space for icon */
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.015);
+    color: var(--text-light);
+}
+
+.students-search::before {
+    content: '';
+    position: absolute;
+    left: 14px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23bfc8ea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat;
+    opacity: 0.95;
+}
+
+/* Table — cleaner, lighter, more professional (improved) */
+.students-table-wrapper {
+    overflow-x: auto;
+    margin-top: 1rem;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(2,6,23,0.45);
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+}
+
+.students-table {
+    width: 100%;
+    min-width: 640px; /* keep columns readable on narrow screens */
+    border-collapse: collapse;
+    background: transparent;
+    overflow: hidden;
+}
+
+/* Sticky, elegant header */
+.students-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: linear-gradient(90deg, rgba(79,70,229,0.95), rgba(236,72,153,0.95));
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 12px 18px;
+    letter-spacing: 0.06em;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.students-table tbody tr {
+    transition: transform 160ms var(--transition-curve), box-shadow 160ms var(--transition-curve), background 160ms ease;
+}
+
+.students-table tbody tr td {
+    padding: 14px 18px;
+    vertical-align: middle;
+    background: transparent;
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+/* Zebra striping (very subtle) */
+.students-table tbody tr:nth-child(even) td {
+    background: rgba(255,255,255,0.012);
+}
+
+/* Row hover for focus */
+.students-table tbody tr:hover td {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(2,6,23,0.35);
+    background: rgba(79,70,229,0.045);
+}
+
+/* Rounded corners for the top/bottom row cells so the table appears as a card */
+.students-table thead th:first-child { border-top-left-radius: 10px; }
+.students-table thead th:last-child { border-top-right-radius: 10px; }
+.students-table tbody tr:first-child td:first-child { border-top-left-radius: 10px; }
+.students-table tbody tr:first-child td:last-child { border-top-right-radius: 10px; }
+.students-table tbody tr:last-child td:first-child { border-bottom-left-radius: 10px; }
+.students-table tbody tr:last-child td:last-child { border-bottom-right-radius: 10px; }
+
+/* Column widths */
+.col-select { width: 64px; }
+.col-email { width: 250px; }
+.col-date { width: 180px; }
+.col-actions { width: 160px; }
+
+/* Modern checkbox appearance */
+.col-select input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: rgba(109,40,217,0.95);
+    cursor: pointer;
+}
+
+/* Avatar polish */
+.student-avatar {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 0.95rem;
+    background: linear-gradient(90deg, rgba(79,70,229,0.95), rgba(236,72,153,0.95));
+    box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+}
+
+/* Name & email layout */
+.student-name { font-weight: 800; color: var(--text-light); }
+.student-sub { color: var(--text-muted); font-size: 0.9rem; }
+
+/* Sort indicator smaller & clearer */
+.sort-indicator { opacity: 0.95; margin-left: 8px; font-size: 0.8rem; color: rgba(255,255,255,0.9); }
+.sort-asc::after, .sort-desc::after { color: rgba(255,255,255,0.9); }
+
+/* Actions: group and alignment */
+.col-actions { text-align: right; }
+.col-actions .btn-action.small { margin-left: 8px; }
+
+/* Mobile: keep table responsive and readable on small screens (no duplicate cards) */
+@media (max-width: 700px) {
+    .students-table-wrapper { overflow-x: auto; }
+    .students-table { min-width: 600px; }
+    .student-avatar { width: 40px; height: 40px; border-radius: 10px; }
+    .students-table tbody tr td { padding: 10px 12px; }
+    .students-controls { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+    .students-search input[type="search"] { width: 100%; }
+}
+
+@media (max-width: 900px) {
+    .details-container.course-details-glass { padding: 2rem 1.2rem; max-width: 95%; }
+    .students-controls { flex-direction: column; align-items: stretch; gap: 0.6rem; padding: 10px; }
+    .students-search { width: 100%; max-width: none; }
+    .students-table { min-width: 640px; }
+}
+
+/* provide a fallback for very small screens so contents don't shrink too much */
+@media (max-width: 480px) {
+    .student-name { font-size: 0.98rem; }
+    .student-sub { font-size: 0.85rem; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('student-search');
+    if (!input) return;
+
+    const rows = Array.from(document.querySelectorAll('.student-row'));
+    const countEl = document.querySelector('.students-count');
+    const emptyFilterRow = document.getElementById('students-empty-filter');
+    const selectAll = document.getElementById('select-all');
+    const exportBtn = document.getElementById('export-visible');
+    const headers = Array.from(document.querySelectorAll('.students-table th[data-sort]'));
+
+    function normalize(s) {
+        return (s || '').toString().toLowerCase();
+    }
+
+    function updateCount(visible) {
+        if (!countEl) return;
+        countEl.textContent = visible + ' enrolled';
+    }
+
+    function filter(q) {
+        const query = normalize(q).trim();
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const name = normalize(row.dataset.name);
+            const email = normalize(row.dataset.email);
+            const match = !query || name.includes(query) || email.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+
+        // show/hide the "no match" row
+        if (emptyFilterRow) {
+            emptyFilterRow.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        updateCount(visibleCount);
+    }
+
+    // selection handlers
+    function updateSelectAllCheckbox() {
+        const selects = Array.from(document.querySelectorAll('.student-select'));
+        if (selects.length === 0) return;
+        const allChecked = selects.every(s => s.checked);
+        const anyChecked = selects.some(s => s.checked);
+        selectAll.checked = allChecked;
+        selectAll.indeterminate = !allChecked && anyChecked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            const checked = !!selectAll.checked;
+            document.querySelectorAll('.student-select').forEach(cb => cb.checked = checked);
+        });
+    }
+
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.classList && e.target.classList.contains('student-select')) {
+            updateSelectAllCheckbox();
+        }
+    });
+
+    // Export CSV (selected if any, otherwise visible)
+    function exportToCSV() {
+        const selected = Array.from(document.querySelectorAll('.student-select')).filter(cb => cb.checked).map(cb => cb.closest('.student-row'));
+        const visibleRows = Array.from(document.querySelectorAll('.student-row')).filter(r => r.style.display !== 'none');
+        const rowsToExport = selected.length ? selected : visibleRows;
+        const lines = [['Name', 'Email', 'Enrolled at']];
+        rowsToExport.forEach(r => {
+            const name = r.querySelector('.student-name') ? r.querySelector('.student-name').textContent.trim() : '';
+            const email = r.querySelector('.col-email a') ? r.querySelector('.col-email a').textContent.trim() : '';
+            const date = r.querySelector('.col-date') ? r.querySelector('.col-date').textContent.trim() : '';
+            lines.push([name, email, date]);
+        });
+        const csvContent = lines.map(e => e.map(v => '"' + (v || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '{{ course.title|replace({' ':'_'}) }}-students.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    if (exportBtn) exportBtn.addEventListener('click', exportToCSV);
+
+    // Sorting
+    function sortRowsBy(key, asc = true) {
+        const tbodyEl = document.querySelector('.students-table tbody');
+        const trs = Array.from(tbodyEl.querySelectorAll('tr.student-row'));
+        trs.sort((a,b) => {
+            const va = normalize(a.dataset[key] || '');
+            const vb = normalize(b.dataset[key] || '');
+            if (va < vb) return asc ? -1 : 1;
+            if (va > vb) return asc ? 1 : -1;
+            return 0;
+        });
+        trs.forEach(tr => tbodyEl.appendChild(tr));
+    }
+
+    headers.forEach(h => {
+        let asc = true;
+        h.style.cursor = 'pointer';
+        h.addEventListener('click', function () {
+            const key = h.dataset.sort;
+            headers.forEach(x => x.classList.remove('sort-asc','sort-desc'));
+            sortRowsBy(key, asc);
+            h.classList.add(asc ? 'sort-asc' : 'sort-desc');
+            asc = !asc;
+        });
+    });
+
+    input.addEventListener('input', function (e) {
+        filter(e.target.value);
+    });
+});
+</script>
+
 {% endblock %}

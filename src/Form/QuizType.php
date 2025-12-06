@@ -16,20 +16,20 @@ class QuizType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Quiz title',
+                'label' => 'Titre du quiz',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a title',
+                        'message' => 'Veuillez entrer un titre',
                     ]),
                     new Length([
                         'min' => 2,
-                        'minMessage' => 'The title should be at least {{ limit }} characters',
+                        'minMessage' => 'Le titre doit contenir au moins {{ limit }} caractères',
                         'max' => 255,
                     ]),
                 ],
             ])
             ->add('url', TextType::class, [
-                'label' => 'External quiz URL',
+                'label' => 'URL du quiz externe',
                 'required' => false,
             ])
         ;

@@ -1,93 +1,323 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Course{% endblock %}
+{% block title %}Détails du Cours{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+
+        :root {
+            --details-bg-color: #111827;
+            --details-gradient-start: #4f46e5;
+            --details-gradient-end: #ec4899;
+            --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .details-page-wrapper {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--details-bg-color);
+            color: var(--text-light);
+            padding: 4rem 1rem;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .details-page-wrapper::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-image: radial-gradient(circle, var(--details-gradient-start), transparent 40%),
+                              radial-gradient(circle, var(--details-gradient-end), transparent 40%);
+            background-repeat: no-repeat;
+            filter: blur(150px) saturate(1.5);
+            opacity: 0.3;
+            animation: background-pan 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes background-pan {
+            0% { background-position: -200px -200px, 200px 200px; }
+            50% { background-position: 200px 200px, -200px -200px; }
+            100% { background-position: -200px -200px, 200px 200px; }
+        }
+
+        .details-container, .related-entities-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 32px 80px var(--shadow-color);
+            animation: details-entry 0.8s var(--transition-curve) backwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes details-entry {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .details-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .course-description {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        .course-meta span {
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-header h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .entity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .entity-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .entity-list li:not(:last-child) {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .entity-list li:hover {
+            background-color: rgba(255,255,255,0.03);
+        }
+        .entity-list a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+        .entity-list .actions a {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+        .entity-list .actions a:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--text-light);
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            justify-content: center;
+        }
+
+        .actions-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 2rem;
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            background-size: 200% 100%;
+            color: var(--text-light);
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: var(--text-light);
+        }
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .btn-back-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Course</h1>
+<div class="details-page-wrapper">
+    <div class="details-container">
+        <div style="display:flex; align-items:center; gap:1rem;">
+            {{ include('_partials/back_button.html.twig', { fallback_route: 'admin_course_index', label: 'Retour' }) }}
+            <h1 class="details-title">{{ course.title }}</h1>
+        </div>
+        <p class="course-description">{{ course.description }}</p>
+        <div class="course-meta">
+            <span>Prix : <strong>{{ course.price }} €</strong></span>
+            <span>Catégorie : <strong>{{ course.category ? course.category.name : 'N/A' }}</strong></span>
+        </div>
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ course.id }}</td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td>{{ course.title }}</td>
-        </tr>
-        <tr>
-            <th>Description</th>
-            <td>{{ course.description }}</td>
-        </tr>
-        <tr>
-            <th>Price</th>
-            <td>{{ course.price }}</td>
-        </tr>
-        <tr>
-            <th>Category</th>
-            <td>{{ course.category ? course.category.name : '' }}</td>
-        </tr>
-        </tbody>
-    </table>
+        <div class="actions-footer">
+            <a href="{{ path('admin_course_edit', {'id': course.id}) }}" class="btn-action btn-primary">Modifier</a>
+            {{ include('course/_delete_form.html.twig') }}
+        </div>
+    </div>
 
-    <h2>Chapters</h2>
-    <ul>
-        {% for chapter in course.chapters %}
-            <li>
-                {{ chapter.title }}
-                (<a href="{{ path('admin_chapter_edit', {'id': chapter.id}) }}">edit</a>)
-            </li>
-        {% else %}
-            <li>No chapters yet.</li>
-        {% endfor %}
-    </ul>
-    <p>
-        <a href="{{ path('admin_chapter_new_for_course', {'id': course.id}) }}">Add chapter</a>
-    </p>
+    <div class="related-entities-container">
+        <div class="section-header">
+            <h2>Chapitres</h2>
+            <a href="{{ path('admin_chapter_new_for_course', {'id': course.id}) }}" class="btn-action btn-primary">Ajouter un chapitre</a>
+        </div>
+        <ul class="entity-list">
+            {% for chapter in course.chapters %}
+                <li>
+                    <span>{{ chapter.title }}</span>
+                    <div class="actions">
+                        <a href="{{ path('admin_chapter_edit', {'id': chapter.id}) }}">Modifier</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="no-records">Aucun chapitre pour le moment.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-    <h2>Attachments</h2>
-    <ul>
-        {% for attachment in course.attachments %}
-            <li>
-                <a href="{{ attachment.url }}" target="_blank">
-                    {{ attachment.name ?: attachment.url }}
-                </a>
-                (<a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">edit</a>)
-            </li>
-        {% else %}
-            <li>No attachments yet.</li>
-        {% endfor %}
-    </ul>
-    <p>
-        <a href="{{ path('admin_attachment_new_for_course', {'id': course.id}) }}">
-            Add attachment
-        </a>
-    </p>
+    <div class="related-entities-container">
+        <div class="section-header">
+            <h2>Pièces jointes</h2>
+            <a href="{{ path('admin_attachment_new_for_course', {'id': course.id}) }}" class="btn-action btn-primary">Ajouter une pièce jointe</a>
+        </div>
+        <ul class="entity-list">
+            {% for attachment in course.attachments %}
+                <li>
+                    <a href="{{ attachment.url }}" target="_blank">{{ attachment.name ?: attachment.url }}</a>
+                    <div class="actions">
+                        <a href="{{ path('admin_attachment_edit', {'id': attachment.id}) }}">Modifier</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="no-records">Aucune pièce jointe pour le moment.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-    <h2>Quizzes</h2>
-    <ul>
-        {% for quiz in course.quizzes %}
-            <li>
-                {{ quiz.title }}
-                {% if quiz.url %}
-                    – <a href="{{ quiz.url }}" target="_blank">Open external quiz</a>
-                {% else %}
-                    – (no URL set)
-                {% endif %}
-                (<a href="{{ path('admin_quiz_edit', {'id': quiz.id}) }}">edit</a>)
-            </li>
-        {% else %}
-            <li>No quizzes yet.</li>
-        {% endfor %}
-    </ul>
-    <p>
-        <a href="{{ path('admin_quiz_new_for_course', {'id': course.id}) }}">
-            Add quiz
-        </a>
-    </p>
-
-    <a href="{{ path('admin_course_index') }}">back to list</a>
-    <a href="{{ path('admin_course_edit', {'id': course.id}) }}">edit</a>
-
-    {{ include('course/_delete_form.html.twig') }}
+    <div class="related-entities-container">
+        <div class="section-header">
+            <h2>Quiz</h2>
+            <a href="{{ path('admin_quiz_new_for_course', {'id': course.id}) }}" class="btn-action btn-primary">Ajouter un quiz</a>
+        </div>
+        <ul class="entity-list">
+            {% for quiz in course.quizzes %}
+                <li>
+                    <span>
+                        {{ quiz.title }}
+                        {% if quiz.url %}
+                            – <a href="{{ quiz.url }}" target="_blank" style="text-decoration: underline;">Ouvrir le quiz externe</a>
+                        {% endif %}
+                    </span>
+                    <div class="actions">
+                        <a href="{{ path('admin_quiz_edit', {'id': quiz.id}) }}">Modifier</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="no-records">Aucun quiz pour le moment.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {% block stylesheets %}
+        <style>
+            body {
+                font-family: 'Manrope', 'Poppins', sans-serif;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(135deg, #00297f, #0058ab);
+            }
+
+            /* Full-page wrapper */
+            .auth-wrapper {
+                display: flex;
+                max-width: 1000px;
+                width: 90%;
+                min-height: 600px;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+                background: #fff;
+            }
+
+            /* Left side (illustration / info) */
+            .auth-left {
+                flex: 1;
+                background: linear-gradient(180deg, #0058ab 0%, #00297f 100%);
+                color: #dfcbb2;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 50px 30px;
+                text-align: center;
+            }
+
+            .auth-left h1 {
+                font-size: 38px;
+                margin-bottom: 20px;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .auth-left p {
+                font-size: 18px;
+                line-height: 1.6;
+                font-weight: 500;
+            }
+
+            /* Right side (form card) */
+            .auth-card {
+                flex: 1;
+                padding: 50px 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border-radius: 0 20px 20px 0;
+            }
+
+            .auth-card .title {
+                font-size: 32px;
+                font-weight: 700;
+                color: #00297f;
+                text-align: center;
+                margin-bottom: 6px;
+            }
+
+            .auth-card .subtitle {
+                font-size: 16px;
+                color: #0058ab;
+                text-align: center;
+                margin-bottom: 30px;
+                font-weight: 500;
+            }
+
+            .input-group {
+                margin-bottom: 20px;
+            }
+
+            .input-group label {
+                font-weight: 600;
+                color: #693e2d;
+                display: block;
+                margin-bottom: 6px;
+                font-size: 14px;
+            }
+
+            .input-group input {
+                width: 85%;
+                margin: 0 auto;
+                display: block;
+                padding: 14px 16px;
+                border-radius: 12px;
+                border: 2px solid #dfcbb2;
+                background: #fff;
+                font-size: 15px;
+                transition: all 0.3s;
+                color: #00297f;
+            }
+
+            .input-group input:focus {
+                border-color: #0058ab;
+                outline: none;
+                box-shadow: 0 0 0 4px rgba(0,88,171,0.15);
+            }
+
+            .alert-error {
+                background: #693e2d;
+                color: #dfcbb2;
+                padding: 12px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                text-align: center;
+                font-weight: 600;
+            }
+
+            .options {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 25px;
+                font-size: 14px;
+                color: #00297f;
+            }
+
+            .options a {
+                color: #0058ab;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+            .options a:hover {
+                text-decoration: underline;
+            }
+
+            .btn-login {
+                width: 85%;
+                margin: 0 auto;
+                display: block;
+                padding: 16px;
+                border: none;
+                border-radius: 16px;
+                background: linear-gradient(120deg, #00297f, #0058ab);
+                color: #dfcbb2;
+                font-size: 17px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 30px rgba(105,62,45,0.3);
+            }
+
+            .btn-login:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 35px rgba(105,62,45,0.45);
+            }
+
+            .signup-text {
+                margin-top: 18px;
+                font-size: 14px;
+                color: #00297f;
+                text-align: center;
+            }
+
+            .signup-text a {
+                color: #0058ab;
+                font-weight: 700;
+            }
+
+            .signup-text a:hover {
+                text-decoration: underline;
+            }
+
+            /* Responsive */
+            @media (max-width: 900px) {
+                .auth-wrapper {
+                    flex-direction: column;
+                    min-height: auto;
+                    border-radius: 20px;
+                }
+
+                .auth-left {
+                    border-radius: 20px 20px 0 0;
+                }
+
+                .auth-card {
+                    border-radius: 0 0 20px 20px;
+                }
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% block javascripts %}{% endblock %}
+</body>
+</html>

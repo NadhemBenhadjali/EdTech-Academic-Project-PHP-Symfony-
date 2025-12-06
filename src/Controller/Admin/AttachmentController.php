@@ -70,6 +70,7 @@ final class AttachmentController extends AbstractController
         return $this->render('attachment/new.html.twig', [
             'attachment' => $attachment,
             'form' => $form,
+            'course' => $course,
         ]);
     }
 
@@ -106,6 +107,7 @@ final class AttachmentController extends AbstractController
         return $this->render('attachment/edit.html.twig', [
             'attachment' => $attachment,
             'form' => $form,
+            'course' => $attachment->getCourse(),
         ]);
     }
 

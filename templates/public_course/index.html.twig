@@ -1,34 +1,238 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}All courses{% endblock %}
+{% block title %}All Courses{% endblock %}
 
 {% block body %}
-    <h1>All courses</h1>
+    <div class="details-page-wrapper">
+        <div class="details-container">
+            <div style="display:flex; align-items:center; gap:1rem;">
+                {{ include('_partials/back_button.html.twig', { parent_route: 'public_course_index', fallback_route: 'public_course_index', label: 'Retour' }) }}
+                <h1 class="details-title">Catalogue des cours</h1>
+            </div>
+            <div class="courses-grid">
+                {% for course in courses %}
+                    <div class="course-card">
+                        <div class="course-card-header">
+                            <span class="course-category">{{ course.category ? course.category.name : 'Uncategorized' }}</span>
+                            <span class="price-badge">{{ course.price|number_format(2, '.', ' ') }} €</span>
+                        </div>
+                        <div class="course-card-title">{{ course.title }}</div>
+                        <div class="course-card-actions">
+                            <a class="btn-view" href="{{ path('public_course_show', {'id': course.id}) }}" title="View">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                                <span>View</span>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="no-courses">No courses yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for course in courses %}
-            <tr>
-                <td>{{ course.title }}</td>
-                <td>{{ course.price }}</td>
-                <td>{{ course.category ? course.category.name : '' }}</td>
-                <td>
-                    <a href="{{ path('public_course_show', {'id': course.id}) }}">View</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">No courses yet.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+        :root {
+            --details-bg-color: #111827;
+            --details-gradient-start: #4f46e5;
+            --details-gradient-end: #ec4899;
+            --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --transition-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .details-page-wrapper {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--details-bg-color);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .details-page-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background-image: radial-gradient(circle, var(--details-gradient-start) 0%, transparent 50%),
+                              radial-gradient(circle, var(--details-gradient-end) 0%, transparent 50%);
+            background-position: -200px -200px, 200px 200px;
+            background-repeat: no-repeat;
+            transform: translate(-50%, -50%);
+            filter: blur(150px) saturate(1.5);
+            opacity: 0.3;
+            animation: background-pan 20s linear infinite;
+        }
+        @keyframes background-pan {
+            0% { background-position: -200px -200px, 200px 200px; }
+            25% { background-position: 200px -200px, -200px 200px; }
+            50% { background-position: 200px 200px, -200px -200px; }
+            75% { background-position: -200px 200px, 200px -200px; }
+            100% { background-position: -200px -200px, 200px 200px; }
+        }
+        .details-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 32px 80px var(--shadow-color);
+            animation: details-entry 0.8s var(--transition-curve) backwards;
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes details-entry {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .details-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            background: linear-gradient(90deg, #d1d5db 0%, #f9fafb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .course-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 2rem 1.3rem 1.5rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            transition: transform 0.18s var(--transition-curve), box-shadow 0.18s var(--transition-curve);
+            animation: card-fade-in 0.7s var(--transition-curve) backwards;
+        }
+        @keyframes card-fade-in {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .course-card:hover {
+            transform: translateY(-6px) scale(1.025);
+            box-shadow: 0 16px 48px rgba(79, 70, 229, 0.18);
+        }
+        .course-card-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.1rem;
+        }
+        .course-category {
+            background: var(--accent-gradient);
+            color: #fff;
+            font-size: 0.92rem;
+            font-weight: 600;
+            border-radius: 7px;
+            padding: 3px 13px;
+            letter-spacing: 0.01em;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.10);
+        }
+        .price-badge {
+            display: inline-block;
+            background: var(--accent-gradient);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 4px 14px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.10);
+            letter-spacing: 0.01em;
+        }
+        .course-card-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 1.3rem;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.10);
+            min-height: 2.5em;
+        }
+        .course-card-actions {
+            margin-top: auto;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
+            padding: 10px 22px;
+            background: var(--accent-gradient);
+            color: #fff;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s var(--transition-curve);
+            text-decoration: none;
+            border: none;
+            box-shadow: 0 4px 16px rgba(76, 29, 149, 0.15);
+            outline: none;
+        }
+        .btn-view svg {
+            margin-left: 2px;
+            vertical-align: middle;
+            transition: transform 0.2s;
+        }
+        .btn-view:hover {
+            background-position: right center;
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 25px rgba(76, 29, 149, 0.18);
+        }
+        .btn-view:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+        }
+        .btn-view:hover svg {
+            transform: scale(1.15);
+        }
+        .no-courses {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            font-style: italic;
+            margin: 2.5rem auto;
+            width: 100%;
+        }
+        @media (max-width: 700px) {
+            .details-container {
+                padding: 1.2rem;
+            }
+            .details-title {
+                font-size: 1.5rem;
+            }
+            .courses-grid {
+                gap: 1.2rem;
+            }
+            .course-card {
+                padding: 1.2rem 0.7rem 1rem 0.7rem;
+            }
+        }
+    </style>
 {% endblock %}

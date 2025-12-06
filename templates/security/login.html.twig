@@ -1,34 +1,137 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_auth.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+<div class="login-wrapper">
+
+    <div class="login-left" aria-hidden="true">
+        <div class="left-inner">
+            <h1>Learn, Grow, Succeed</h1>
+            <p>Access your courses, track progress, and achieve your goals with curated content and guided paths.</p>
+            <figure class="illustration" aria-hidden="true">
+                <!-- Subtle SVG pattern / illustration -->
+                <svg width="240" height="140" viewBox="0 0 240 140" style="fill:none">
+                    <defs>
+                        <linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed" /><stop offset="1" stop-color="#06b6d4" /></linearGradient>
+                    </defs>
+                    <rect x="0" y="8" width="240" height="124" rx="12" style="fill:url(#lg);opacity:0.15"/>
+                    <g style="fill:#fff;opacity:0.9">
+                        <circle cx="40" cy="40" r="6" />
+                        <circle cx="80" cy="60" r="4" />
+                        <circle cx="120" cy="36" r="5" />
+                        <rect x="150" y="60" width="44" height="6" rx="3" />
+                    </g>
+                </svg>
+            </figure>
         </div>
-    {% endif %}
-
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Remember me
-        </label>
     </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+    <div class="login-card" role="main">
+        <h2 class="title">Welcome Back </h2>
+        <p class="subtitle">Log in to continue learning</p>
+
+        <form method="post" class="login-form" novalidate>
+
+            {% if error %}
+                <div class="alert-error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" value="{{ last_username }}" name="email" required autocomplete="email" placeholder="you@domain.com">
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="options">
+                <label class="remember"><input type="checkbox" name="_remember_me"> Remember me</label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Sign in</button>
+
+            <p class="signup-text">New here? <a href="{{ path('app_register') }}">Create an account</a></p>
+
+        </form>
+    </div>
+
+</div>
+
+<style>
+    /* Improved professional styles */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600&display=swap');
+
+    :root{
+        --bg-a: #0b1228; /* deep */
+        --bg-b: #07203f; /* accent */
+        --card: #ffffff;
+        --accent-1: #0ea5a4; /* teal */
+        --accent-2: #7c3aed; /* violet */
+        --muted: #6b7280;
+        --surface-shadow: 0 16px 50px rgba(2,6,23,0.28);
+        --radius: 18px;
+    }
+
+    body{margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background:linear-gradient(135deg,var(--bg-a), var(--bg-b)); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px}
+
+    .login-wrapper{width:100%; max-width:980px; display:flex; border-radius:var(--radius); overflow:hidden; box-shadow:var(--surface-shadow); background:transparent}
+
+    .login-left{flex:1; background:linear-gradient(180deg,#07396f 0%, #051737 100%); color: #e6f2ff; padding:48px 36px; display:flex; align-items:center}
+    .left-inner{max-width:420px}
+    .login-left h1{margin:0 0 12px; font-family:Poppins, Inter, sans-serif; font-size:32px; letter-spacing:-0.02em}
+    .login-left p{margin:0 0 20px; color:rgba(230,242,255,0.9); font-size:15px}
+    .illustration{margin-top:10px}
+
+    .login-card{width:420px; background:var(--card); padding:36px; display:flex; flex-direction:column; justify-content:center; gap:12px; border-radius:0 18px 18px 0}
+
+    .title{margin:0; font-size:22px; color:#07123a; font-weight:700}
+    .subtitle{margin:0 0 6px; color:var(--muted); font-size:14px}
+
+    .login-form{margin-top:6px}
+
+    .input-group{display:flex; flex-direction:column; align-items:center; margin:10px 0}
+    .input-group label{align-self:flex-start; margin-left:6%; font-weight:600; font-size:13px; color:#3b4253}
+    .input-group input{width:84%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef6; background:#fff; font-size:14px; color:#0b1228; transition:box-shadow .18s, transform .08s}
+    .input-group input::placeholder{color:#9aa4b2}
+    .input-group input:focus{outline:none; box-shadow:0 8px 30px rgba(124,58,237,0.12); transform:translateY(-2px); border-color:var(--accent-2)}
+
+    .alert-error{width:84%; margin:0 auto 8px; background:#ffecee; color:#8b1d1d; padding:12px 14px; border-radius:10px; font-weight:600}
+
+    .options{width:84%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .options .remember{display:flex; gap:8px; align-items:center}
+    .options input[type='checkbox']{width:16px; height:16px}
+    .forgot{color:var(--accent-2); text-decoration:none; font-weight:600}
+    .forgot:hover{text-decoration:underline}
+
+    .btn-login{width:84%; margin:12px auto 0; padding:12px 16px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--accent-2),var(--accent-1)); color:#fff; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 10px 30px rgba(99,102,241,0.12); transition:transform .12s, box-shadow .12s}
+    .btn-login:hover{transform:translateY(-3px); box-shadow:0 18px 44px rgba(99,102,241,0.18)}
+
+    .signup-text{width:84%; margin:8px auto 0; text-align:center; color:var(--muted); font-size:13px}
+    .signup-text a{color:var(--accent-2); font-weight:700}
+
+    /* Responsive */
+    @media (max-width:900px){
+        .login-wrapper{flex-direction:column; align-items:stretch; box-shadow:var(--surface-shadow)}
+        .login-left{padding:28px 20px; border-radius:18px 18px 0 0}
+        .login-card{width:100%; padding:26px; border-radius:0 0 18px 18px}
+        .input-group label{margin-left:6%}
+        .input-group input,.alert-error,.options,.btn-login,.signup-text{width:88%}
+    }
+
+    @media (max-width:480px){
+        body{padding:18px}
+        .login-left h1{font-size:22px}
+        .login-card{padding:20px}
+        .input-group input{padding:10px}
+    }
+
+</style>
+
 {% endblock %}
