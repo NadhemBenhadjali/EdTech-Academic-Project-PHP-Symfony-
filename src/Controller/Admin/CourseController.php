@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Course;
 use App\Form\CourseType;
 use App\Repository\CourseRepository;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,8 +75,21 @@ final class CourseController extends AbstractController
     public function delete(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $course->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($course);
-            $entityManager->flush();
+            // empêcher la suppression si des achats existent
+            if (!$course->getPurchases()->isEmpty()) {
+                $this->addFlash('error', 'Impossible de supprimer ce cours : il y a des achats liés. Supprimez d\'abord les achats ou archivez le cours.');
+                return $this->redirectToRoute('admin_course_show', ['id' => $course->getId()]);
+            }
+
+            try {
+                $entityManager->remove($course);
+                $entityManager->flush();
+                $this->addFlash('success', 'Le cours a été supprimé.');
+            } catch (ForeignKeyConstraintViolationException $e) {
+                // au cas où une contrainte côté base empêcherait la suppression
+                $this->addFlash('error', 'Impossible de supprimer le cours en raison de données liées en base.');
+                return $this->redirectToRoute('admin_course_show', ['id' => $course->getId()]);
+            }
         }
 
         return $this->redirectToRoute('admin_course_index', [], Response::HTTP_SEE_OTHER);

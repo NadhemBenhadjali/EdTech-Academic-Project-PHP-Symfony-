@@ -15,16 +15,21 @@
     --text-light: #e5e7eb;
     --text-muted: #9ca3af;
     --accent-gradient: linear-gradient(90deg, var(--details-gradient-start) 0%, var(--details-gradient-end) 100%);
+    /* Title & accent helpers */
+    --details-title-start: #d1d5db;
+    --details-title-end: #f9fafb;
+    --details-accent-rgb: 79,70,229;
+    --action-show-text: #dbeafe;
 }
 .details-page-wrapper{font-family:Inter, sans-serif; background-color:var(--details-bg-color); padding:3rem 1rem; display:flex; justify-content:center;}
 .details-container.course-details-glass{width:100%; max-width:900px; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:20px; padding:1.8rem; color:var(--text-light);}
-.details-title{font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; font-size:1.6rem; text-align:center; margin-bottom:1rem; background:linear-gradient(90deg,#d1d5db 0%,#f9fafb 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
+.details-title{font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; font-size:1.6rem; text-align:center; margin-bottom:1rem; background:linear-gradient(90deg,var(--details-title-start) 0%,var(--details-title-end) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
 .attachments-table{width:100%; border-collapse:collapse; margin-top:1rem;}
 .attachments-table th, .attachments-table td{padding:0.75rem 0.8rem; text-align:left; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-light);}
 .attachments-table thead th{color:var(--text-muted); font-weight:700; font-size:0.95rem}
 .action-links a{display:inline-block; margin-right:0.5rem; padding:0.45rem 0.6rem; border-radius:8px; font-weight:600; font-size:0.9rem; text-decoration:none}
-.action-links a.show{background:rgba(79,70,229,0.12); color:#dbeafe}
-.action-links a.edit{background:linear-gradient(90deg,#06b6d4 0%, #06b6d4 100%); color:white}
+.action-links a.show{background:rgba(var(--details-accent-rgb),0.12); color:var(--action-show-text)}
+.action-links a.edit{background:linear-gradient(90deg,var(--details-gradient-end) 0%, var(--details-gradient-end) 100%); color:white}
 .no-records{padding:1rem; color:var(--text-muted);}
 </style>
 

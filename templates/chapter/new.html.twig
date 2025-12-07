@@ -160,3 +160,15 @@
         }
     </style>
 {% endblock %}
+
+{% block body %}
+    <div class="details-page-wrapper">
+        <div class="details-container">
+            <h1 class="details-title">Nouveau Chapitre</h1>
+
+            {{ include('chapter/_form.html.twig') }}
+
+            <a href="{{ path('admin_course_show', {'id': course.id}) }}" class="btn-back"><span class="btn-back-icon">←</span> Retour au cours</a>
+        </div>
+    </div>
+{% endblock %}

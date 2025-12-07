@@ -40,18 +40,28 @@
 
             <div class="input-group">
                 <label for="email">Email</label>
-                <input id="email" type="email" value="{{ last_username }}" name="email" required autocomplete="email" placeholder="you@domain.com">
+                <input id="email" class="form-control" type="email" value="{{ last_username }}" name="email" required autocomplete="email" placeholder="you@domain.com">
             </div>
 
             <div class="input-group">
                 <label for="password">Password</label>
-                <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
-            </div>
+                <div class="password-row">
+                    <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                    <button type="button" class="icon-btn" aria-label="Toggle password visibility" title="Show / hide password">
+                        <!-- simple eye icon -->
+                        <svg class="eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div class="strength" aria-hidden="true">
+                    <div class="meter"><div class="meter-fill" id="pwd-meter"></div></div>
+                    <div class="meter-desc" id="pwd-desc">Too short</div>
+                </div>
+             </div>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
             <div class="options">
-                <label class="remember"><input type="checkbox" name="_remember_me"> Remember me</label>
+                <label class="remember"><input type="checkbox" class="remember-checkbox" name="_remember_me"> Remember me</label>
                 <a href="#" class="forgot">Forgot password?</a>
             </div>
 
@@ -65,73 +75,103 @@
 </div>
 
 <style>
-    /* Improved professional styles */
+    /* Reuse professional login styles, tweaked for register */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600&display=swap');
 
-    :root{
-        --bg-a: #0b1228; /* deep */
-        --bg-b: #07203f; /* accent */
-        --card: #ffffff;
-        --accent-1: #0ea5a4; /* teal */
-        --accent-2: #7c3aed; /* violet */
-        --muted: #6b7280;
-        --surface-shadow: 0 16px 50px rgba(2,6,23,0.28);
-        --radius: 18px;
-    }
+    :root{ --bg-a: #0b1228; --bg-b: #07203f; --card: #ffffff; --accent-1: #0ea5a4; --accent-2: #7c3aed; --muted: #6b7280; --surface-shadow: 0 16px 50px rgba(2,6,23,0.28); --radius:18px }
 
     body{margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background:linear-gradient(135deg,var(--bg-a), var(--bg-b)); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px}
 
     .login-wrapper{width:100%; max-width:980px; display:flex; border-radius:var(--radius); overflow:hidden; box-shadow:var(--surface-shadow); background:transparent}
+    .register-wrapper .login-left{flex:1; padding:42px 34px}
 
-    .login-left{flex:1; background:linear-gradient(180deg,#07396f 0%, #051737 100%); color: #e6f2ff; padding:48px 36px; display:flex; align-items:center}
-    .left-inner{max-width:420px}
-    .login-left h1{margin:0 0 12px; font-family:Poppins, Inter, sans-serif; font-size:32px; letter-spacing:-0.02em}
+    .login-left{flex:1; background:linear-gradient(180deg,#07396f 0%, #051737 100%); color: #e6f2ff; display:flex; align-items:center}
+    .left-inner{max-width:420px; padding-left:36px}
+    .login-left h1{margin:0 0 12px; font-family:Poppins, Inter, sans-serif; font-size:30px}
     .login-left p{margin:0 0 20px; color:rgba(230,242,255,0.9); font-size:15px}
-    .illustration{margin-top:10px}
 
-    .login-card{width:420px; background:var(--card); padding:36px; display:flex; flex-direction:column; justify-content:center; gap:12px; border-radius:0 18px 18px 0}
+    .login-card{width:420px; background:var(--card); padding:30px 34px; display:flex; flex-direction:column; justify-content:flex-start; gap:8px; border-radius:0 18px 18px 0}
 
-    .title{margin:0; font-size:22px; color:#07123a; font-weight:700}
-    .subtitle{margin:0 0 6px; color:var(--muted); font-size:14px}
+    .title{margin:6px 0 0; font-size:20px; color:#07123a; font-weight:700}
+    .subtitle{margin:0 0 8px; color:var(--muted); font-size:13px}
 
     .login-form{margin-top:6px}
-
     .input-group{display:flex; flex-direction:column; align-items:center; margin:10px 0}
     .input-group label{align-self:flex-start; margin-left:6%; font-weight:600; font-size:13px; color:#3b4253}
-    .input-group input{width:84%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef6; background:#fff; font-size:14px; color:#0b1228; transition:box-shadow .18s, transform .08s}
-    .input-group input::placeholder{color:#9aa4b2}
-    .input-group input:focus{outline:none; box-shadow:0 8px 30px rgba(124,58,237,0.12); transform:translateY(-2px); border-color:var(--accent-2)}
+
+    /* Use default Symfony widget styles but constrain width */
+    .input-group .form-control, input[type="text"], input[type="email"], input[type="password"]{width:84%; padding:12px 14px; border-radius:12px; border:1px solid #e6eef6; background:#fff; font-size:14px; color:#0b1228}
+    .input-group .form-control::placeholder, input::placeholder{color:#9aa4b2}
+    .input-group .form-control:focus, input:focus{outline:none; box-shadow:0 8px 30px rgba(124,58,237,0.12); transform:translateY(-2px); border-color:var(--accent-2)}
+
+    .password-row{position:relative; width:84%; display:flex}
+    .password-row .form-control{flex:1}
+    .icon-btn{position:absolute; right:10px; top:6px; height:36px; width:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer}
+    .icon-btn .eye{width:18px; height:18px; color:#6b7280}
+
+    .strength{width:84%; margin-top:6px}
+    .meter{height:8px; background:#eef3fb; border-radius:10px; overflow:hidden}
+    .meter-fill{height:100%; width:0; background:linear-gradient(90deg, #ef4444, #f59e0b, #10b981); transition:width .25s}
+    .meter-desc{font-size:0.82rem; color:var(--muted); margin-top:0.4rem}
+
+    .options{width:84%; margin:6px auto 0; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .remember-checkbox{width:16px; height:16px}
+    .forgot{color:var(--accent-2); text-decoration:none; font-weight:600}
+
+    .btn-login{width:84%; margin:14px auto 0; padding:12px 16px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--accent-2),var(--accent-1)); color:#fff; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 10px 30px rgba(99,102,241,0.12)}
+    .btn-login:hover{transform:translateY(-3px); box-shadow:0 18px 44px rgba(99,102,241,0.18)}
 
     .alert-error{width:84%; margin:0 auto 8px; background:#ffecee; color:#8b1d1d; padding:12px 14px; border-radius:10px; font-weight:600}
 
-    .options{width:84%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--muted)}
-    .options .remember{display:flex; gap:8px; align-items:center}
-    .options input[type='checkbox']{width:16px; height:16px}
-    .forgot{color:var(--accent-2); text-decoration:none; font-weight:600}
-    .forgot:hover{text-decoration:underline}
-
-    .btn-login{width:84%; margin:12px auto 0; padding:12px 16px; border-radius:12px; border:none; background:linear-gradient(90deg,var(--accent-2),var(--accent-1)); color:#fff; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 10px 30px rgba(99,102,241,0.12); transition:transform .12s, box-shadow .12s}
-    .btn-login:hover{transform:translateY(-3px); box-shadow:0 18px 44px rgba(99,102,241,0.18)}
-
     .signup-text{width:84%; margin:8px auto 0; text-align:center; color:var(--muted); font-size:13px}
-    .signup-text a{color:var(--accent-2); font-weight:700}
 
-    /* Responsive */
     @media (max-width:900px){
-        .login-wrapper{flex-direction:column; align-items:stretch; box-shadow:var(--surface-shadow)}
+        .login-wrapper{flex-direction:column}
         .login-left{padding:28px 20px; border-radius:18px 18px 0 0}
         .login-card{width:100%; padding:26px; border-radius:0 0 18px 18px}
-        .input-group label{margin-left:6%}
-        .input-group input,.alert-error,.options,.btn-login,.signup-text{width:88%}
+        .input-group .form-control, input, .alert-error,.options,.btn-login{width:88%}
+        .left-inner{padding-left:20px}
     }
 
     @media (max-width:480px){
         body{padding:18px}
         .login-left h1{font-size:22px}
         .login-card{padding:20px}
-        .input-group input{padding:10px}
+        .input-group .form-control{padding:10px}
+        .left-inner{padding-left:12px}
     }
-
 </style>
+
+<script>
+    // Toggle password visibility and update eye icon fill
+    (function(){
+        var pwd = document.getElementById('password');
+        var btn = document.querySelector('.icon-btn');
+        var meter = document.getElementById('pwd-meter');
+        var desc = document.getElementById('pwd-desc');
+
+        if(btn && pwd){
+            btn.addEventListener('click', function(){
+                if(pwd.type === 'password'){
+                    pwd.type = 'text';
+                } else {
+                    pwd.type = 'password';
+                }
+            });
+
+            pwd.addEventListener('input', function(){
+                var len = pwd.value.length;
+                let pct, text;
+                if(len === 0){ pct = 0; text = 'Too short'; }
+                else if(len < 6){ pct = 25; text = 'Very weak'; }
+                else if(len < 10){ pct = 55; text = 'Weak'; }
+                else if(len < 14){ pct = 75; text = 'Good'; }
+                else { pct = 100; text = 'Strong'; }
+                if(meter) meter.style.width = (pct || 0) + '%';
+                 if(desc) desc.textContent = text;
+             });
+         }
+     })();
+</script>
 
 {% endblock %}

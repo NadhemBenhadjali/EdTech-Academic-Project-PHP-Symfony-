@@ -42,7 +42,7 @@ final class QuizController extends AbstractController
         return $this->render('teacher/quiz/new.html.twig', [
             'quiz'   => $quiz,
             'course' => $course,
-            'form'   => $form,
+            'form'   => $form->createView(),
         ]);
     }
 
@@ -69,7 +69,7 @@ final class QuizController extends AbstractController
         return $this->render('teacher/quiz/edit.html.twig', [
             'quiz'   => $quiz,
             'course' => $course,
-            'form'   => $form,
+            'form'   => $form->createView(),
         ]);
     }
 
